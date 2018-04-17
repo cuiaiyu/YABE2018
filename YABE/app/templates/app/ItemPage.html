@@ -1,0 +1,104 @@
+﻿
+
+{% extends "app/layout.html" %}
+
+{% block content %}
+  <div id="common_div">
+    <img src = "/static/app/images/YABE.png"  width="185" height="110" class="center">
+  </div>
+  <div id="container">
+    <div id="left_div">
+      <ul>
+        <li><p id="category_name">
+          <a href="/projects/?category=0">All</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=1">Bookstore</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=2">Collectibles & Art</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=3">Electronics</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=4">Fashion</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=5">Home & Garden</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=6">Sporting Goods</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=7">Toys & Hobbies</a>
+          </p>
+        </li>
+
+         <li><p id="category_name">
+          <a href="/projects/?category=8">Others</a>
+          </p>
+        </li>
+        
+      </ul>
+    </div>
+
+    <div id="middle_div">
+      <div id="item_detailed_pic_div">
+        <img src = "{{host_info.photoPath}}" width="300" height="300">
+      </div>
+
+      <div id="item_detailed_descript_div">
+        <h2>{{item.name}}</h2><br />
+
+        
+         <h3>{{item.quantity}} in stock</h3><br/>
+          
+                
+        <h3>Price: ${{item.price}}</h3> 
+
+        <form method="post">
+            
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+         <button id ="quant_submit" type="submit" class="pure-button pure-button-primary">Buy</button>
+        </form> 
+
+         <p>description:</p>
+        <p>{{item.description}}</p><br/>
+        <h3>Product Seller Information: </h3>
+        <p>{{item.seller.yabeusername}}</p>
+
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+<script>
+    function confirmPurchase(price, quantity) {
+        var r = confirm(["Want to buy ", tostring(quantity), "items with $", tostring(price * quantity),"?"]);
+        if (r == true) {
+            txt = "You purchase Successes!";
+        } else {
+            txt = "You purchase Canceled!";
+        }
+        
+</script>

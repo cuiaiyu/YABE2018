@@ -1,0 +1,66 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<!--body-->
+<h2>My Projects - {{curr_selection}}</h2>
+<div>
+<!-- Project Table - Rendered by Django-->     
+    <div>
+        <div style="text-align:center; width:80%;">
+            <div class="subtitle-center">{{curr_selection}}</div>
+            {% for project in projectForm %}
+            <div class="project-box">
+                <div class="project-box-date">{{project.month}}/{{project.year}}</div>
+                <div class="project-box-header">{{project.title}}</div>
+                <div class="project-box-content">{{project.content}}<br/>
+                    <div style="text-align: right;width:100%">
+                    <button class="pure-button project-button" onclick="window.location.href = '{{project.detail_link}}'">More Details</button>
+                    <button class="pure-button project-button" onclick="window.location.href = '{{project.source_link}}'">Source Code</button>
+                    </div>
+                </div>                  
+            </div><br/>
+            {% endfor %}
+        </div>
+    </div>
+
+<!--Index bar  - Renderde by Django-->
+    <div class="rightbar ">
+            
+        <div id="menu" class="pure-menu pure-menu-open" style="color:grey;height:100%;">
+            <div class="pure-menu-heading"> 
+                <div class="dashed-title-box">Contents</div>
+            </div>
+                <ul>
+                <li><a href="{% url 'project' %}">All</a></li></ul>
+                
+                <a href="#" class="pure-menu-heading">Years</a>
+                <ul class="sideBar-scrollbar" style="height:34%">
+                    {% for year in yearList %}
+                        <li><a 
+                                {% if curr_selection in year %}
+                                    style="background:#f57f7f;" 
+                                {% endif %}
+                                href="/projects/?key=year&value={{year}}">{{year}} >></a></li>
+                    {% endfor %}
+                    <li><a>To be added...</a></li>
+                </ul>
+                    <a href="#" class="pure-menu-heading">Categories</a>
+                <ul class="sideBar-scrollbar" style="height:34%">
+                    {% for category in categoryList %}
+                        <li><a 
+                                {% if curr_selection in category %}
+                                    style="background:#f57f7f;" 
+                                {% endif %}
+                                href="/projects/?key=category&value={{category}}">{{category}} >></a></li>
+                    {% endfor %}
+                    <li><a>To be added...</a></li>
+                </ul>
+                </div>
+            
+    </div>
+</div>
+
+
+ 
+{% endblock %}

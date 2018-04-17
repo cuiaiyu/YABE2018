@@ -1,0 +1,101 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<!--body-->
+<h2>My Projects - {{curr_selection}}</h2>
+<div>
+<!-- Project Table - Rendered by Django-->     
+    <div>
+        <div style="text-align:center; width:80%;">
+            <div class="subtitle-center">{{curr_selection}}</div>
+            {% for product in products %}
+            <div class="project-box">
+                <div id="item_picture_div">
+                    <img  src="{{host_info.photoPath}}" />
+                </div>
+                <div class="item_descrip_div">
+                    <div class="project-box-date">${{product.price}}</div>
+                    <p class="project-box-header">{{product.name}}</p>
+                    <p class="project-box-content">[category: {{product.category}}]{{product.description}}
+                    </p>
+                        <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'biddingItemPage' itemIdx=product.id %}">Details</a></li>
+                </ul>
+                    
+
+            </div>
+                </div>
+            </div><br/>
+            {% endfor %}
+        </div>
+    </div>
+
+<!--Index bar  - Renderde by Django-->
+    <div class="rightbar ">
+            
+        <div id="menu" class="pure-menu pure-menu-open" style="color:grey;height:100%;">
+            <div class="pure-menu-heading"> 
+                <div class="dashed-title-box">Contents</div>
+            </div>
+               <ul>
+        <li><p id="category_name">
+          <a href="/projects/?category=0">All</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=1">Bookstore</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=2">Collectibles & Art</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=3">Electronics</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=4">Fashion</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=5">Home & Garden</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=6">Sporting Goods</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/projects/?category=7">Toys & Hobbies</a>
+          </p>
+        </li>
+
+         <li><p id="category_name">
+          <a href="/projects/?category=8">Others</a>
+          </p>
+        </li>
+
+        
+      </ul>
+            <form type="get" action="." style="margin: 0">
+    <input  id="search_box" type="text" name="search_box"  placeholder="Search...">
+    <button id="search_submit" type="submit" >Submit</button>
+</form>
+                </div>
+            
+    </div>
+</div>
+
+
+ 
+{% endblock %}

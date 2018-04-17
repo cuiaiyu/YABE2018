@@ -1,0 +1,189 @@
+﻿@CHARSET "UTF-8";
+
+/********************************
+   This is for the "myProjects" page
+*********************************/
+.project-box{
+	width:100%; 
+
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+	background: #4a4747;
+    color:lightgray;
+	text-align:left;
+}
+
+.index-bar{
+    width:18%;
+    margin:0;
+    padding:0; 
+    position:fixed; 
+    right:0; 
+    top:50px;
+    bottom:0;
+}
+.project-box:hover{
+	background: #f57f7f;
+    color:#4a4747;
+}
+.project-box-header{
+	text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); 
+	font-size: 2em;
+	text-decoration:solid;
+	margin-top:10px; 
+	margin-bottom:0px;
+	padding-bottom:0px;
+	margin-left: 10px; 
+	margin-right:10px;
+	border-bottom: 1px solid gray;
+}
+.project-box-content{
+	text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+	font-size: 1.1em;
+	margin-top:10px;
+	margin-left:10px;
+	margin-right:10px;
+	line-height:150%;
+}
+.project-box-date{
+    margin:0;
+    padding:0;
+	text-align:right;
+	font-size:1.2em;
+}
+
+.more-table{
+    width:100%;
+    position:fixed;
+    right:10%;
+    
+}
+.table-project{
+	text-align:center;
+	margin-left:10%;
+	margin-right:10%;
+	padding: 0 0 0 0;
+}
+.table-project-titlerow{
+	border-bottom: 1px solid grey;
+	color:grey; 
+	font-size: 2em; 
+	padding-bottom:50px;
+	}
+.pure-menu-sort-bar{
+	text-align: right; 
+	margin-bottom: 30px;
+}
+
+.subtitle-center{
+    width:100%;
+    text-align:center; 
+    color:grey; 
+    text-decoration:solid;
+    font-size:1em;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom:30px;
+    margin-top:30px;
+}
+
+.project-button{
+    color:lightgray;
+    background:#4a4747;
+}
+
+.project-button:hover{
+    color:coral;
+    background:#4a4747;
+}
+
+.project-box-right{
+	position: fixed;
+  	right: 0;
+  	top: 50px;
+  	bottom: 0;
+    background: transparent;
+  	padding-top: 10px;
+  	padding-bottom:10px;
+}
+.project-box-left{
+	position: fixed;
+  	left: 5px;
+  	top: 10px;
+  	bottom: 10;
+    background: transparent;
+  	padding-top: 10px;
+  	padding-bottom:10px;
+}
+
+.project-box-right{
+	position: fixed;
+  	right: 5px;
+  	top: 10px;
+  	bottom: 10;
+    background: transparent;
+  	width: 80%;
+  	padding-top: 10px;
+  	padding-bottom:10px;
+}
+
+.item_picture_div {
+  overflow: hidden;
+  float: left;
+  width: 200px;
+  height: 200px;
+  border: 1px solid grey;
+}
+.item_descrip_div {
+  width: auto;
+  padding: 20px 20px 20px 20px;
+  height: 200px;
+}
+/*-------------------
+	Left Side Bar
+--------------------*/
+
+
+
+.rightbar{
+  	position: fixed;
+  	right: 0;
+  	top: 50px;
+  	bottom: 0;
+    background: transparent;
+  	width: 18%;
+  	padding-top: 10px;
+  	padding-bottom:10px;
+}
+
+
+
+.pure-menu li a:hover,
+    #menu .pure-menu li a:focus {
+        background: #FFBABA;
+    }
+
+#menu .pure-menu-selected,
+#menu .pure-menu-heading {
+    background: transparent;
+    color:lightcoral;
+}
+
+.sideBar-scrollbar{
+	overflow-x:hidden;
+	overflow-y:scroll;
+	scrollbar-face-color:#f57f7f;
+	scrollbar-highlight-color:white;
+	Scrollbar-shadow-color:white;
+	Scrollbar-3dlight-color:#f57f7f;
+	Scrollbar-darkshadow-color:#f57f7f;
+}
+
+.dashed-title-box{
+	font-size:1.2em; 
+	color: #f57f7f; 
+	margin:10px 10px 20px 20px; 
+	text-align:center;
+	border:1px dashed #f57f7f;
+	border-radius: 4px;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}

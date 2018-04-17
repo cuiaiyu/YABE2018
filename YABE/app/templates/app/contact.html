@@ -1,0 +1,40 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h2>Contact Me</h2>
+<div style="margin: 10%;">
+        <h4 style="color:rgb(150,150,150);">
+            I can be easily reached by email at <a href="mailto:{{host_info.email}}">{{host_info.email}}</a>,<br />
+            Or by message left below :)
+        </h4>
+        <br />
+        <h4 id="status" style="color:darksalmon">
+            Sorry for the inconvience, this leave message block is still in developing, please contact me by email
+        </h4>
+        <form class="pure-form pure-form-stacked" action="/sendMessage/" method="post">
+             {% csrf_token %}
+            <fieldset>
+                <legend>Leave a Message</legend>
+                <div class="pure-control-group">
+                    <label for="name">name</label>
+                    <input id="name" type="text" placeholder="Harry Potter" required style="width:600px;">
+                </div>
+                <div class="pure-control-group">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" required placeholder="harryPotter@hogwarts.edu" style="width:600px;">
+                </div>
+                <div class="pure-control-group">
+                    <label for="subject">Subject</label>
+                    <input id="subject" type="text" require placeholder="Some Subject" style="width:600px;">
+                </div>
+                <div class="pure-control-group">
+                    <label for="content">Content</label>
+                    <textArea id="content" type="text" required style="height:200px; width:600px;"></textArea>
+                </div>
+                <button type="submit" class="pure-button pure-button-primary">Send</button>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}

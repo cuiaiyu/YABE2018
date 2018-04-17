@@ -1,0 +1,86 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+
+<!--CSS-->
+ {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'app/content/general_bio.css' %}" />
+
+<!--Body-->
+<h2>About Me</h2>
+  <div style="margin-top: 10%; width: 100%;text-align:center">
+        <!--Basic Bio-->
+        <div class="Bio" style="width:65%">
+            <img class="bio-photo" src="{{host_info.photoPath}}" /><br /><br />
+            <h2 class="bio-name">{{curruser}}</h2>
+            <h4 class="bio-name">Current Balance: ${{yabeuser.balance}}</h4>
+            <br />
+
+            <!--More Bar-->
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+
+                    <li class="menu-item"><a href="{% url 'addItem' %}">Add Regular Item</a></li>
+                    <li class="menu-item"><a href="{% url 'addBiddingItem' %}">Add Bidding Item</a></li>
+                    <li class="menu-item"><a href="{% url 'addAddr' %}">Add Address</a></li>
+                    <li class="menu-item"><a href="{% url 'addPaymentMethod' %}">Add Payment Method</a></li>
+                </ul>
+            </div>
+            <br />
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+                    <li class="menu-item"><a href="{% url 'biddingHistory'%}">My Bidding History</a></li>
+                    <li class="menu-item"><a href="{% url 'transactionHistory' userType=1 %}">My Purchases History</a></li>
+                    <li class="menu-item"><a href="{% url 'transactionHistory' userType=2 %}">My Sold History</a></li>
+                </ul>
+            </div>
+            <div class="bio-content">
+                Address:
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Street1</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zipcode</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for addr in address %}
+        <tr>
+            <td>{{addr.street1}}</td>
+            <td>{{addr.city}}</td>
+            <td>{{addr.state}}</td>
+            <td>{{addr.zipcode}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+                Payment Methods:
+                            <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Card Number</th>
+            <th>Card Type</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for card in cards %}
+        <tr>
+            <td>{{card.cardNumber}}</td>
+            <td>{{card.type}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+            </div><br />
+
+        </div>
+    </div>
+
+{% endblock %}

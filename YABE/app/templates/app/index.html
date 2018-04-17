@@ -1,0 +1,70 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<!--CSS-->
+<style>
+    .blog {
+        text-align: center;
+        width: 70%;
+        margin: 0 auto;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'app/content/general_bio.css' %}" />
+
+
+
+<!--body-->
+    <h2>Welcome to YABE!</h2><br/><br/>
+    <div class="blog">
+    <!--Bio-->
+        <div class="subtitle-center">BIO</div>
+        <div class="Bio">
+            <img class="bio-photo" src="{{host_info.photoPath}}" /><br /><br />
+            <h2 class="bio-name">{{host_info.name}}</h2>
+            <div class="bio-content">
+                {{host_info.bio}}
+                <div>Email: <a href="mailto:{{host_info.email}}">{{host_info.email}}</a> </div>
+            </div><br /><br />
+
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+                    <li class="menu-item"><a href="{{host_info.github}}">Github</a></li>
+                    <li class="menu-item"><a href="{{host_info.linkedin}}">LinkedIn</a></li>
+                    
+                    <li class="menu-item">{{curruser}}</li>
+                    <li class="menu-item" onclick="showResume()">
+                            <a href="{% url 'login' %}">login</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{% url 'contact' %}">Leave Message</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    
+    <!--Projects-->
+    <div style="text-align:center;">
+        <div class="subtitle-center">PRODUCTS</div>
+            {% for project in projectForm %}
+                <div class="project-box">
+                    <div class="project-box-date">{{project.month}}/{{project.year}}</div>
+                    <div class="project-box-header">{{project.title}}</div>
+                    <div class="project-box-content">{{project.content}}<br/>
+                      <div style="text-align: right;width:100%">
+                    <button class="pure-button project-button" onclick="window.location.href = '{{project.detail_link}}'">More Details</button>
+                    <button class="pure-button project-button" onclick="window.location.href = '{{project.source_link}}'">Source Code</button>
+                    </div>
+                    </div>                  
+                </div><br/>
+            {% endfor %}
+            <a href="/projects/">More projects...</a>
+    </div>
+    
+    <!--More-->   
+        <div class="subtitle-center">MORE ARE IN DEVELOPING...</div>
+</div>
+
+{% endblock %}

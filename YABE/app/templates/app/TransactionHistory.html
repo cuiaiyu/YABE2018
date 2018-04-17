@@ -1,0 +1,33 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>Transaction History</h2>
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Seller</th>
+            <th>Buyer</th>
+            <th>ItemName</th>
+            <th>Date</th>
+            <th>Quantity</th>
+            <th>Single Cost</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for order in myorders %}
+        <tr>
+            <td>{{order.seller_id.yabeusername}}</td>
+            <td>{{order.buyer_id.yabeusername}}</td>
+            <td>{{order.item_id.name}}</td>
+            <td>{{order.datetime}}</td>
+            <td>{{order.quantity}}</td>
+            <td>{{order.item_id.price}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

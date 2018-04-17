@@ -1,0 +1,33 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>My Bidding History</h2>
+   <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Seller</th>
+            <th>ItemName</th>
+            <th>End Date</th>
+            <th>Bid Date</th>
+            <th>My Price</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for bidding in mybiddings %}
+        <tr>
+            <td>{{bidding.bid_item.item.seller.yabeusername}}</td>
+            <td>{{bidding.bid_item.item.name}}</td>
+            <td>{{bidding.bid_item.expire_date}}</td>
+            <td>{{bidding.bidding_date}}</td>
+            <td>{{bidding.bid_price}}</td>
+            <td>{{bidding.status}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

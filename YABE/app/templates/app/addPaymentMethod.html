@@ -1,0 +1,11 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h2>Add Payment Method</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Payment Method</button>
+</form>
+{% endblock %}

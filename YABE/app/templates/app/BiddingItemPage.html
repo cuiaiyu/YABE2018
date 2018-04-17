@@ -1,0 +1,111 @@
+﻿
+
+{% extends "app/layout.html" %}
+
+{% block content %}
+  <div id="common_div">
+    <img src = "/static/app/images/YABE.png"  width="185" height="110" class="center">
+  </div>
+  <div id="container">
+    <div id="left_div">
+      <ul>
+        <li><p id="category_name">
+          <a href="/Bidding/?category=0">All</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=1">Bookstore</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=2">Collectibles & Art</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=3">Electronics</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=4">Fashion</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=5">Home & Garden</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=6">Sporting Goods</a>
+          </p>
+        </li>
+
+        <li><p id="category_name">
+          <a href="/Bidding/?category=7">Toys & Hobbies</a>
+          </p>
+        </li>
+
+         <li><p id="category_name">
+          <a href="/Bidding/?category=8">Others</a>
+          </p>
+        </li>
+        
+      </ul>
+    </div>
+
+    <div id="middle_div">
+      <div id="item_detailed_pic_div">
+        <img src = "{{host_info.photoPath}}" width="300" height="300">
+      </div>
+
+      <div id="item_detailed_descript_div">
+        <h2>{{item.name}}</h2>sold by {{item.seller.yabeusername}}
+          <p>Item description: {{item.description}}</p><br/>
+
+         <p>Start price: ${{biddingitem.start_price}} </p>
+         <p>Current highest price: ${{curr_price}}</p>    
+         <p>Buy-Out price: ${{biddingitem.max_price}}</p> 
+
+        <form method="post">
+            
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+         <button id ="quant_submit" type="submit" class="pure-button pure-button-primary">Buy</button>
+        </form> 
+        Bidding history:
+        <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Date</th>
+            <th>Bidding Price</th>
+            <th>Bidder</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for history in biddingHistory %}
+        <tr>
+            <td>{{history.bidding_date}}</td>
+            <td>${{history.bid_price}}</td>
+            <td>{{history.buyer.yabeusername}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        
+
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+

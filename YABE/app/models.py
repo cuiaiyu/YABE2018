@@ -75,6 +75,7 @@ class Review(models.Model):
     datetime = models.DateTimeField(auto_now = True)
     rating = models.IntegerField()
     item = models.ForeignKey(Item,on_delete = models.CASCADE)
+    buyer = models.ForeignKey(YabeUser,on_delete = models.CASCADE)
 
 
 

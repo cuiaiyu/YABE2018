@@ -55,7 +55,6 @@ urlpatterns = [
     url(r'^transactionHistory/(?P<userType>\d+)/$$', app.views.transactionHistory, name='transactionHistory'),
 
     url(r'^itemPage/(?P<itemIdx>\d+)/$$', app.views.itemPage, name='itemPage'),
-    url(r'^LeaveRating/(?P<item_id>\d+)/$$', app.views.addRating, name='leaveRating'),
     
     url(r'^biddingItemPage/(?P<itemIdx>\d+)/$$', app.views.biddingItemPage, name='biddingItemPage'),
     # Uncomment the admin/doc line below to enable admin documentation:

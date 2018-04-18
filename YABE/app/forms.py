@@ -108,17 +108,17 @@ class AddressForm(forms.Form):
                                 widget=forms.TextInput({
                                     'class': 'form-control',
                                     'placeholder': 'Street2'}))
-    city = forms.CharField(label = _('Street2'),max_length=1000,
+    city = forms.CharField(label = _('City'),max_length=1000,
                               required = False,
                                 widget=forms.TextInput({
                                     'class': 'form-control',
                                     'placeholder': 'City'}))
-    state = forms.CharField(label = _('Street2'),max_length=1000,
+    state = forms.CharField(label = _('State'),max_length=1000,
                               required = False,
                                 widget=forms.TextInput({
                                     'class': 'form-control',
                                     'placeholder': 'State (All lowercase; do pennsylvania not pa'}))
-    zipcode = forms.IntegerField(label = _('ZipCode?'),min_value = 10000,max_value = 99999,
+    zipcode = forms.IntegerField(label = _('ZipCode'),min_value = 10000,max_value = 99999,
                                     widget = forms.NumberInput({
                                     'class': 'form-control',
                                     'placeholder': '12345'}))
@@ -143,6 +143,17 @@ class BuyItemForm(forms.Form):
 
 class BiddingItemForm(forms.Form):
    howmuch = forms.DecimalField(label = _('My Bidding Price: '))
+
+
+class RatingForm(forms.Form):
+   rating = forms.IntegerField(label = _('Rating: (5 - best vs 1 - worst'),min_value = 1,max_value = 5,
+                                    widget = forms.NumberInput({
+                                    'class': 'form-control',
+                                    'placeholder': 'Rate'}))
+   comments = forms.CharField(label = _('Comments:'),max_length=1000,
+                                widget=forms.TextInput({
+                                    'class': 'form-control',
+                                    'placeholder': 'I really like this item!'}))
 
 
 

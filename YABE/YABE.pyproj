@@ -34,6 +34,10 @@
     <Compile Include="app\models.py" />
     <Compile Include="app\tests.py" />
     <Compile Include="app\views.py" />
+    <Compile Include="app\YABE\BasicData.py" />
+    <Compile Include="app\YABE\DBAPI.py" />
+    <Compile Include="app\YABE\ProjectData.py" />
+    <Compile Include="app\YABE\YABE_settings.py" />
     <Compile Include="app\__init__.py" />
     <Compile Include="app\migrations\__init__.py" />
     <Compile Include="manage.py" />
@@ -55,6 +59,22 @@
     <Folder Include="app\YABE\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\templates\app\addAddr.html" />
+    <Content Include="app\templates\app\addBiddingItem.html" />
+    <Content Include="app\templates\app\addItem.html" />
+    <Content Include="app\templates\app\addPaymentMethod.html" />
+    <Content Include="app\templates\app\aiyucui-resume.html" />
+    <Content Include="app\templates\app\aiyucui-resume_16fall.html" />
+    <Content Include="app\templates\app\Bidding.html" />
+    <Content Include="app\templates\app\BiddingItemPage.html" />
+    <Content Include="app\templates\app\ItemPage.html" />
+    <Content Include="app\templates\app\LeaveRating.html" />
+    <Content Include="app\templates\app\Products.html" />
+    <Content Include="app\templates\app\projects.html" />
+    <Content Include="app\templates\app\research.html" />
+    <Content Include="app\templates\app\signup.html" />
+    <Content Include="app\templates\app\thxSendMsg.html" />
+    <Content Include="app\templates\app\TransactionHistory.html" />
     <Content Include="requirements.txt" />
     <Content Include="db.sqlite3" />
     <Content Include="app\static\app\content\bootstrap.css" />

@@ -142,15 +142,8 @@ def project(request):
             items = list(app.models.Item.objects.filter(quantity__gt = 0,isBidding = False));
         else:
             items = list(app.models.Item.objects.filter(category=value,quantity__gt = 0,isBidding = False));
-
-    #items = list(app.models.Item.objects.all());
-    print('????')
-    temp = items[0].picture
-    print(items[0].description)
-    print('!!!')
-    #for item in items:
-    #    if item.picture.url == temp:
-    #        item.picture.url = 'bob.png'
+    
+    
     return render(
         request,
          'app/Products.html',
@@ -222,14 +215,6 @@ def bidding(request):
         else:
             items = list(app.models.Item.objects.filter(category=value,quantity__gt = 0,isBidding = True));
 
-    #items = list(app.models.Item.objects.all());
-    print('????')
-    temp = items[0].picture
-    print(items[0].description)
-    print('!!!')
-    #for item in items:
-    #    if item.picture.url == temp:
-    #        item.picture.url = 'bob.png'
     return render(
         request,
          'app/Bidding.html',
@@ -275,7 +260,14 @@ def itemPage(request,itemIdx):
                                     widget = forms.NumberInput({
                                     'class': 'form-control',
                                     'placeholder': ['max = ',str(item.quantity)],}))
-
+    buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
+    hasBought = (list(app.models.Order.objects.filter(buyer_id = buyer,item_id = item)) != [])
+    print(hasBought)
+    comments = list(app.models.Review.objects.filter(buyer = buyer,item = item))
+    print(comments)
+    print('hhhhhhhhhhhh')
+    hasCommented = (comments == [])
+    (print(hasCommented))
     return render(
         request,
          'app/ItemPage.html',
@@ -286,7 +278,9 @@ def itemPage(request,itemIdx):
             'year':datetime.now().year,
             'item':item,
             'curruser':request.user.username,
-            'quantityList':range(1,item.quantity+1)
+            'quantityList':range(1,item.quantity+1),
+            'hasBought':hasBought and hasCommented,
+            'reviews':comments
         }
     )
         
@@ -312,6 +306,7 @@ def biddingItemPage(request,itemIdx):
                  return redirect('research',code = 1)
             elif code == 2:
                  return redirect('research', code = 2)
+
     else:
         form = app.forms.BiddingItemForm()
 
@@ -350,6 +345,8 @@ def research(request,code):
         message = "Not meet minimum bidding increment!"
     elif code == "3":
         message = "You already bidded this item!"
+    elif code == "4":
+        message = "Adding Successfully!!"
     return render(
         request,
         'app/research.html',
@@ -425,7 +422,7 @@ def addItem(request):
                               isBidding = False)
 
            #login(request, user) # login in defined in this page
-            return redirect('home')
+            return redirect('research', code = 4)
 
     else:
         form = app.forms.AddItemForm()
@@ -459,7 +456,7 @@ def addBiddingItem(request):
             
            
             DBAPI.biddingitem_create(item = myitem,maxprice = maxprice,startprice=startprice,increment=increment,duration = duration)
-            return redirect('home')
+            return redirect('research', code = 4)
 
     else:
         form = app.forms.AddBiddingItemForm()
@@ -477,7 +474,7 @@ def addAddr(request):
             zipcode = str(form.cleaned_data.get('zipcode'))
             username = request.user.username;
             DBAPI.user_createAddr(street1 = street1,street2=street2,state = state,city = city,zipcode = zipcode,username = username)
-            return redirect('home')
+            return redirect('research', code = 4)
 
     else:
         form = app.forms.AddressForm()
@@ -492,11 +489,27 @@ def addPaymentMethod(request):
             cardtype = str(form.cleaned_data.get('cardType'))
             username = request.user.username;
             DBAPI.user_createPaymentMethod(cardNumber = cardNumber,pType = cardtype,username = username)
-            return redirect('home')
+            return redirect('research', code = 4)
 
     else:
         form = app.forms.PaymentMethodForm()
     return render(request, 'app/addPaymentMethod.html', {'form': form})
+
+def addRating(request,item_id):
+    if request.method == 'POST':
+        form = app.forms.RatingForm(request.POST)
+        if form.is_valid():
+            rating = form.cleaned_data.get('rating')
+            comments = str(form.cleaned_data.get('comments'))
+            username = request.user.username;
+            user = app.models.YabeUser.objects.get(yabeusername = username)
+            item = app.models.Item.objects.get(id = item_id)
+            app.models.Review.objects.create(feedback = comments, buyer = user, item = item,rating = rating )
+            return redirect('itemPage', itemIdx = item_id)
+
+    else:
+        form = app.forms.RatingForm()
+    return render(request, 'app/leaveRating.html', {'form': form})
 
 
 

@@ -77,7 +77,7 @@ def about(request):
             'year':datetime.now().year,
             'host_info':BasicData.HOST,
             'curruser':request.user.username,
-            'cards':DBAPI.user_getAllPaymentMethod(yabeUser),
+            'cards': app.models.PaymentMethod.objects.filter(holder = yabeUser),
             'address':DBAPI.user_getAllAddr(yabeUser),
             'yabeuser':yabeUser,
         }

@@ -214,7 +214,7 @@ def bidItem(item,buyer,price,shipfrom,shipto):
 
 def winBidding(item,buyer,price,shipfrom,shipto):
      biddingItem = app.models.BiddingItem.objects.get(item = item)
-     app.models.Order.objects.create(item_id = item,
+     myorder = app.models.Order.objects.create(item_id = item,
                                     buyer_id = buyer,
                                     seller_id = item.seller,
                                     quantity = 1,
@@ -234,6 +234,11 @@ def winBidding(item,buyer,price,shipfrom,shipto):
      buyer.balance = buyer.balance - price
      item.seller.balance = item.seller.balance + price
      item.seller.save()
+
+     if buyer.hasMembership == True and item.name != 'YABEDONATION' and item.name != 'YABEVIP':
+        app.models.Cashback.objects.create(ammount = item.price/20,
+        order = myorder,
+        buyer = buyer)
 
      for record in app.models.BiddingRecord.objects.filter(bid_item = biddingItem):
         if record.buyer != buyer:

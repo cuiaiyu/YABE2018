@@ -3,31 +3,32 @@
 {% block content %}
 
 <!--body-->
-<h2>My Projects - {{curr_selection}}</h2>
+<h2>Products for Selling</h2>
 <div>
 <!-- Project Table - Rendered by Django-->     
     <div>
         <div style="text-align:center; width:80%;">
             <div class="subtitle-center">{{curr_selection}}</div>
             {% for product in products %}
-            <div class="project-box">
-                <div id="item_picture_div">
-                    <img  src="{{host_info.photoPath}}" />
-                </div>
-                <div class="item_descrip_div">
-                    <div class="project-box-date">${{product.price}}</div>
-                    <p class="project-box-header">{{product.name}}</p>
-                    <p class="project-box-content">[category: {{product.category}}]{{product.description}}
-                    </p>
+            {% if product.name != "YABEVIP" and product.name != "YABEDONATION" %}
+                <div class="project-box">
+                    <div id="item_picture_div">
+                        <img  src="{{host_info.photoPath}}" />
+                    </div>
+                    <div class="item_descrip_div">
+                        <div class="project-box-date">${{product.price}}</div>
+                        <p class="project-box-header">{{product.name}}</p>
+                        <p class="project-box-content">[category: {{product.category}}]{{product.description}}
+                        </p>
                         <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="{% url 'itemPage' itemIdx=product.id %}">Details</a></li>
-                </ul>
-                    
-
-            </div>
+                            <ul class="nav navbar-nav">
+                                <li><a href="{% url 'itemPage' itemIdx=product.id %}">Details</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div><br/>
+            {% endif %}
+            <br/>
             {% endfor %}
         </div>
     </div>
@@ -41,7 +42,7 @@
             </div>
                <ul>
         <li><p id="category_name">
-          <a href="/projects/?category=0">All</a>
+          <a href="/projects/">All</a>
           </p>
         </li>
 

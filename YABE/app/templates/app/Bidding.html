@@ -3,7 +3,7 @@
 {% block content %}
 
 <!--body-->
-<h2>My Projects - {{curr_selection}}</h2>
+<h2>Products for Bidding</h2>
 <div>
 <!-- Project Table - Rendered by Django-->     
     <div>
@@ -22,6 +22,7 @@
                         <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'biddingItemPage' itemIdx=product.id %}">Details</a></li>
+                    <li><a href="{% url 'buyitnow' itemIdx=product.id %}">Buy It Now</a></li>
                 </ul>
                     
 
@@ -41,7 +42,7 @@
             </div>
                <ul>
         <li><p id="category_name">
-          <a href="/projects/?category=0">All</a>
+          <a href="/projects">All</a>
           </p>
         </li>
 
@@ -89,7 +90,7 @@
       </ul>
             <form type="get" action="." style="margin: 0">
     <input  id="search_box" type="text" name="search_box"  placeholder="Search...">
-    <button id="search_submit" type="submit" >Submit</button>
+    <button id="search_submit" type="submit" >Search</button>
 </form>
                 </div>
             

@@ -15,24 +15,48 @@
             <img class="bio-photo" src="{{host_info.photoPath}}" /><br /><br />
             <h2 class="bio-name">{{curruser}}</h2>
             <h4 class="bio-name">Current Balance: ${{yabeuser.balance}}</h4>
-            <br />
+            <br/>
+            {% if yabeuser.hasMembership == True %}
+            <!--More Bar-->
+            <h4 class="bio-name">You are our VIP user! </h4>
+            you can have a 5% cashback for each of your purchase!<br />
+            You current cashback is: ${{cashback}}  <a href="{% url 'cashback' %}">Check Cashback Detail</a>
+            {% else %}
+            Wanna become an VIP user by paying $100? <a href="{% url 'research' code=8 %}">Yes!</a>
+            {% endif %}
+            <br /><br />
 
+
+            <h4 class="bio-name">Edit My Info</h4>
             <!--More Bar-->
             <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
                 <ul>
-
-                    <li class="menu-item"><a href="{% url 'addItem' %}">Add Regular Item</a></li>
-                    <li class="menu-item"><a href="{% url 'addBiddingItem' %}">Add Bidding Item</a></li>
                     <li class="menu-item"><a href="{% url 'addAddr' %}">Add Address</a></li>
                     <li class="menu-item"><a href="{% url 'addPaymentMethod' %}">Add Payment Method</a></li>
                 </ul>
             </div>
             <br />
+
+          <h4 class="bio-name">Seller Section</h4>
+           {% if yabeuser.isSeller == True %}
+            <!--More Bar-->
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+                    <li class="menu-item"><a href="{% url 'addItem' %}">Add Regular Item</a></li>
+                    <li class="menu-item"><a href="{% url 'addBiddingItem' %}">Add Bidding Item</a></li>
+                    <li class="menu-item"><a href="{% url 'transactionHistory' userType=2 %}">My Sold History</a></li>
+                </ul>
+            </div>
+            {% else %}
+            Wanna become a seller? <a href="{% url 'research' code=5 %}">Yes!</a>
+            {% endif %}
+
+            <br /> <br />
+            <h4 class="bio-name">Buyer Section</h4>
             <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
                 <ul>
                     <li class="menu-item"><a href="{% url 'biddingHistory'%}">My Bidding History</a></li>
                     <li class="menu-item"><a href="{% url 'transactionHistory' userType=1 %}">My Purchases History</a></li>
-                    <li class="menu-item"><a href="{% url 'transactionHistory' userType=2 %}">My Sold History</a></li>
                 </ul>
             </div>
             <div class="bio-content">
@@ -42,6 +66,7 @@
         
         <tr>
             <th>Street1</th>
+            <th>Street2</th>
             <th>City</th>
             <th>State</th>
             <th>Zipcode</th>
@@ -52,6 +77,7 @@
         {% for addr in address %}
         <tr>
             <td>{{addr.street1}}</td>
+            <td>{{addr.street2}}</td>
             <td>{{addr.city}}</td>
             <td>{{addr.state}}</td>
             <td>{{addr.zipcode}}</td>

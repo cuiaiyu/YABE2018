@@ -1,0 +1,31 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>Transaction History</h2>
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Date</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Single Price</th>
+            <th>Cashback</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for cb in cashbacklist %}
+        <tr>
+            <td>{{cb.order.datetime}}</td>
+            <td>{{cb.order.item_id.name}}</td>
+            <td>{{cb.order.quantity}}</td>
+            <td>{{cb.order.item_id.price}}</td>
+            <td>{{cb.ammount}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -175,7 +175,7 @@ def biddingRecord_getBuyerByItem(item):
 #--------------------------------------------------------------------------------
 def buyItem(item,buyer,seller,quantity,shipfrom,shipto):
     # create transaction:
-    app.models.Order.objects.create(item_id = item,
+    myorder = app.models.Order.objects.create(item_id = item,
                                     buyer_id = buyer,
                                     seller_id = seller,
                                     quantity = quantity,
@@ -190,6 +190,11 @@ def buyItem(item,buyer,seller,quantity,shipfrom,shipto):
     buyer.save()
     seller.balance = seller.balance + quantity*item.price
     seller.save()
+    if buyer.hasMembership == True and item.name != 'YABEDONATION' and item.name != 'YABEVIP':
+        app.models.Cashback.objects.create(ammount = quantity*item.price/20,
+        order = myorder,
+        buyer = buyer)
+
 
 def bidItem(item,buyer,price,shipfrom,shipto):
     biddingItem = app.models.BiddingItem.objects.get(item = item)
@@ -225,6 +230,11 @@ def winBidding(item,buyer,price,shipfrom,shipto):
      item.quantity = 0
      item.save()
      biddingItem.save()
+
+     buyer.balance = buyer.balance - price
+     item.seller.balance = item.seller.balance + price
+     item.seller.save()
+
      for record in app.models.BiddingRecord.objects.filter(bid_item = biddingItem):
         if record.buyer != buyer:
             record.status = "lost"

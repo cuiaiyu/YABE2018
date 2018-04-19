@@ -52,8 +52,9 @@ urlpatterns = [
     
     url(r'^Bidding/$', app.views.bidding, name='bidding'),
     url(r'^BiddingHistory/$', app.views.biddingHistory, name='biddingHistory'),
+    url(r'^Cashback/$', app.views.cashbackHistory, name='cashback'),
     url(r'^transactionHistory/(?P<userType>\d+)/$$', app.views.transactionHistory, name='transactionHistory'),
-
+    url(r'^buyitnow/(?P<itemIdx>\d+)/$$', app.views.buyitnow, name='buyitnow'),
     url(r'^itemPage/(?P<itemIdx>\d+)/$$', app.views.itemPage, name='itemPage'),
     url(r'^LeaveRating/(?P<item_id>\d+)/$$', app.views.addRating, name='leaveRating'),
     

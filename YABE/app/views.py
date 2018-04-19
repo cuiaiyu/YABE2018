@@ -65,10 +65,18 @@ def contact(request):
 
 
 def about(request):
+
     """Renders the about page."""
     assert isinstance(request, HttpRequest)
     username = request.user.username
     yabeUser = app.models.YabeUser.objects.get(yabeusername = username)
+    print(yabeUser.isSeller)
+    print('!!!')
+    cashback = 0
+    cashbacklist = list(app.models.Cashback.objects.filter(buyer = yabeUser))
+    for cb in cashbacklist:
+        cashback = cashback + cb.ammount
+
     return render(
         request,
         'app/about.html',
@@ -80,6 +88,7 @@ def about(request):
             'cards': app.models.PaymentMethod.objects.filter(holder = yabeUser),
             'address':DBAPI.user_getAllAddr(yabeUser),
             'yabeuser':yabeUser,
+            'cashback':cashback,
         }
     )
 
@@ -98,33 +107,7 @@ def resume(request):
         }
     )
 
-'''
-# filter my_projects list by a certain attribute's value
-def project(request):
-    assert isinstance(request, HttpRequest)
-    value=request.GET.get("value")
-    key=request.GET.get("key")
-    if value==None:
-        projectForm=ProjectData.getAllProjects
-        curr_selection='All'
-    else:
-        projectForm=ProjectData.getProjectsByAttr(key,value)
-        curr_selection=value
-    return render(
-        request,
-         'app/Products.html',
-        context = 
-        {
-            'host_info':BasicData.HOST,
-            'year':datetime.now().year,
-            'projectForm':projectForm,
-            'yearList':ProjectData.getValueListByAttr('year'),
-            'categoryList':ProjectData.getValueListByAttr('category'),
-            'curr_selection':curr_selection,
-            'curruser':request.user,
-        }
-    )
-'''
+
 def project(request):
     '''Rends Project Page'''
     assert isinstance(request, HttpRequest)
@@ -180,6 +163,24 @@ def transactionHistory(request,userType):
             'myorders':myorders,
         }
     )
+def cashbackHistory(request):
+    '''Rends Project Page'''
+    curruser = request.user.username
+    user = app.models.YabeUser.objects.get(yabeusername = curruser)
+    cashbacklist = list(app.models.Cashback.objects.filter(buyer = user))
+
+    return render(
+        request,
+         'app/Cashback.html',
+        context = 
+        {
+            'host_info':BasicData.HOST,
+            'year':datetime.now().year,
+            'curr_selection':'',#curr_selection,
+            'curruser':request.user.username,
+            'cashbacklist':cashbacklist,
+        }
+    )
 def biddingHistory(request):
     '''Rends Project Page'''
     curruser = request.user.username
@@ -233,7 +234,7 @@ def bidding(request):
 
 def itemPage(request,itemIdx):
     '''Rends Project Page'''
-    
+    buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
     if request.method == 'POST':
         form = app.forms.BuyItemForm(request.POST)
@@ -242,6 +243,10 @@ def itemPage(request,itemIdx):
                                     'class': 'form-control',
                                     'placeholder': ['max = ',str(item.quantity)],}))
         if form.is_valid():
+            if list(app.models.Addr.objects.filter(holder = buyer)) == []:
+                return redirect('research',code = 6)
+            if list(app.models.PaymentMethod.objects.filter(holder = buyer)) == []:
+                return redirect('research',code = 7)
             quant = form.cleaned_data.get('quantity')
             wannaDonate =  form.cleaned_data.get('hasDonate')
             buyer_id = app.models.YabeUser.objects.get(yabeusername = request.user.username)
@@ -286,14 +291,17 @@ def itemPage(request,itemIdx):
         
 def biddingItemPage(request,itemIdx):
     '''Rends Project Page'''
-    
+    buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
     biddingItem = app.models.BiddingItem.objects.get(item = item)
 
     if request.method == 'POST':
         form = app.forms.BiddingItemForm(request.POST)
         if form.is_valid():
-            
+            if list(app.models.Addr.objects.filter(holder = buyer)) == []:
+                return redirect('research',code = 6)
+            if list(app.models.PaymentMethod.objects.filter(holder = buyer)) == []:
+                return redirect('research',code = 7)
             howmuch = form.cleaned_data.get('howmuch')
             buyer_id = app.models.YabeUser.objects.get(yabeusername = request.user.username)
             #if (app.models.BiddingRecord.objects.get(buyer = buyer_id) != None):
@@ -347,9 +355,62 @@ def research(request,code):
         message = "You already bidded this item!"
     elif code == "4":
         message = "Adding Successfully!!"
+    elif code == "5":
+        curruser = app.models.YabeUser.objects.get(yabeusername = request.user.username);
+        if list(app.models.Addr.objects.filter(holder = curruser)) == []:
+                return redirect('research',code = 6)
+        if list(app.models.PaymentMethod.objects.filter(holder = curruser)) == []:
+                return redirect('research',code = 7)
+        
+        curruser.isSeller = True
+        curruser.save()
+        message = "You are a seller now!!"
+    elif code == "6":
+        message = "You do not a address!!"
+    elif code == "7":
+        message = "You do not a payment method!!"
+    elif code == "8":
+        curruser = app.models.YabeUser.objects.get(yabeusername = request.user.username);
+        if list(app.models.Addr.objects.filter(holder = curruser)) == []:
+                return redirect('research',code = 6)
+        if list(app.models.PaymentMethod.objects.filter(holder = curruser)) == []:
+                return redirect('research',code = 7)
+        vip = app.models.Item.objects.get(name = 'YABEVIP')
+        us = vip.seller
+        shipfrom = DBAPI.user_getAllAddr(us)[0]
+        shipto = DBAPI.user_getAllAddr(curruser)[0]
+        DBAPI.buyItem(item = vip, 
+                    buyer = curruser,seller = us,quantity = 1, shipfrom = shipfrom, shipto=shipto)
+        curruser.hasMembership = True
+        curruser.save()
+        message = "You are a VIP now!!"
     return render(
         request,
         'app/research.html',
+        context = 
+        {
+            'year':datetime.now().year,            
+            'curruser':request.user.username,
+            'message':message,
+        }
+    )
+
+def buyitnow(request,itemIdx):
+    """Renders the resume page."""
+    
+    item = app.models.Item.objects.get(id = itemIdx)
+    biddingItem = app.models.BiddingItem.objects.get(item = item)
+    buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
+    DBAPI.winBidding(item = item,
+               buyer = buyer,
+               price = biddingItem.max_price,
+               shipfrom = DBAPI.user_getAllAddr(item.seller)[0],
+               shipto = DBAPI.user_getAllAddr(buyer)[0])
+    message = ['You Bought item',item.name,' now!']
+
+    return render(
+        request,
+        'app/BuyItNow.html',
         context = 
         {
             'year':datetime.now().year,            

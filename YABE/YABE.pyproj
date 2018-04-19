@@ -67,6 +67,8 @@
     <Content Include="app\templates\app\aiyucui-resume_16fall.html" />
     <Content Include="app\templates\app\Bidding.html" />
     <Content Include="app\templates\app\BiddingItemPage.html" />
+    <Content Include="app\templates\app\BuyItNow.html" />
+    <Content Include="app\templates\app\Cashback.html" />
     <Content Include="app\templates\app\ItemPage.html" />
     <Content Include="app\templates\app\LeaveRating.html" />
     <Content Include="app\templates\app\Products.html" />

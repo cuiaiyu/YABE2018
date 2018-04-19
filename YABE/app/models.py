@@ -19,7 +19,7 @@ class Item(models.Model):
     name = models.CharField(max_length = 20)
     category = models.CharField(max_length = 20)
     subcategory = models.CharField(max_length = 20)
-    seller = models.ForeignKey(YabeUser)
+    seller = models.ForeignKey(YabeUser,on_delete=models.DO_NOTHING)
     picture = models.ImageField()
     description = models.TextField()
     quantity = models.IntegerField()
@@ -56,11 +56,11 @@ class Addr(models.Model):
     holder = models.ForeignKey(YabeUser,on_delete = models.CASCADE)
 
 class Order(models.Model):
-    buyer_id = models.ForeignKey(YabeUser,related_name="buyerid")
-    seller_id = models.ForeignKey(YabeUser, related_name="sellerid",)
-    item_id = models.ForeignKey(Item)
-    ship_from = models.ForeignKey(Addr,related_name="fromAddr")
-    ship_to = models.ForeignKey(Addr,related_name="toAddr")
+    buyer_id = models.ForeignKey(YabeUser,related_name="buyerid",on_delete=models.DO_NOTHING)
+    seller_id = models.ForeignKey(YabeUser, related_name="sellerid",on_delete=models.DO_NOTHING)
+    item_id = models.ForeignKey(Item,on_delete=models.DO_NOTHING)
+    ship_from = models.ForeignKey(Addr,related_name="fromAddr",on_delete=models.DO_NOTHING)
+    ship_to = models.ForeignKey(Addr,related_name="toAddr",on_delete=models.DO_NOTHING)
     quantity = models.IntegerField()
     status = models.TextField()
     datetime = models.DateTimeField(auto_now = True)
@@ -76,6 +76,12 @@ class Review(models.Model):
     rating = models.IntegerField()
     item = models.ForeignKey(Item,on_delete = models.CASCADE)
     buyer = models.ForeignKey(YabeUser,on_delete = models.CASCADE)
+
+ 
+class Cashback(models.Model):
+    ammount = models.DecimalField(max_digits = 10,decimal_places = 2)
+    order = models.ForeignKey(Order,on_delete = models.DO_NOTHING)
+    buyer = models.ForeignKey(YabeUser,on_delete = models.DO_NOTHING)
 
 
 

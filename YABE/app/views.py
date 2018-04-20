@@ -234,6 +234,8 @@ def bidding(request):
 
 def itemPage(request,itemIdx):
     '''Rends Project Page'''
+    if request.user.username == '':
+        return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
     if request.method == 'POST':
@@ -253,6 +255,8 @@ def itemPage(request,itemIdx):
             seller_id = item.seller
             shipfrom = DBAPI.user_getAllAddr(seller_id)[0]
             shipto = DBAPI.user_getAllAddr(buyer_id)[0]
+            if quant > item.quantity:
+                return redirect('research',code = 10)
             DBAPI.buyItem(item = item, buyer = buyer_id,seller = seller_id,quantity = quant, shipfrom = shipfrom, shipto=shipto)
             if wannaDonate:
                 donation = app.models.Item.objects.get(name = 'YABEDONATION')
@@ -291,6 +295,8 @@ def itemPage(request,itemIdx):
         
 def biddingItemPage(request,itemIdx):
     '''Rends Project Page'''
+    if request.user.username == '':
+        return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
     biddingItem = app.models.BiddingItem.objects.get(item = item)
@@ -384,6 +390,11 @@ def research(request,code):
         curruser.hasMembership = True
         curruser.save()
         message = "You are a VIP now!!"
+    elif code == "9":
+         message = "Please log in to access more features!"
+    elif code == "10":
+         message = "Your quantity exceed the maximum in stock!"
+
     return render(
         request,
         'app/research.html',
@@ -397,7 +408,9 @@ def research(request,code):
 
 def buyitnow(request,itemIdx):
     """Renders the resume page."""
-    
+    if request.user.username == '':
+        return redirect('research',code = 9)
+   
     item = app.models.Item.objects.get(id = itemIdx)
     biddingItem = app.models.BiddingItem.objects.get(item = item)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
@@ -547,9 +560,17 @@ def addPaymentMethod(request):
         form = app.forms.PaymentMethodForm(request.POST)
         if form.is_valid():
             cardNumber = form.cleaned_data.get('cardnumber')
-            cardtype = str(form.cleaned_data.get('cardType'))
+            cardtype = form.cleaned_data.get('cardtype')
+            print('cardtype')
+            print(cardtype)                                
+            if cardtype == '1':
+                type = 'Visa'
+            elif cardtype == '2':
+                type = 'Discover'
+            else:
+                type = 'Yabe'
             username = request.user.username;
-            DBAPI.user_createPaymentMethod(cardNumber = cardNumber,pType = cardtype,username = username)
+            DBAPI.user_createPaymentMethod(cardNumber = cardNumber,pType = type,username = username)
             return redirect('research', code = 4)
 
     else:

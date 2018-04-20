@@ -45,26 +45,6 @@
             </div>
         </div>
     
-    <!--Projects-->
-    <div style="text-align:center;">
-        <div class="subtitle-center">PRODUCTS</div>
-            {% for project in projectForm %}
-                <div class="project-box">
-                    <div class="project-box-date">{{project.month}}/{{project.year}}</div>
-                    <div class="project-box-header">{{project.title}}</div>
-                    <div class="project-box-content">{{project.content}}<br/>
-                      <div style="text-align: right;width:100%">
-                    <button class="pure-button project-button" onclick="window.location.href = '{{project.detail_link}}'">More Details</button>
-                    <button class="pure-button project-button" onclick="window.location.href = '{{project.source_link}}'">Source Code</button>
-                    </div>
-                    </div>                  
-                </div><br/>
-            {% endfor %}
-            <a href="/projects/">More projects...</a>
-    </div>
-    
-    <!--More-->   
-        <div class="subtitle-center">MORE ARE IN DEVELOPING...</div>
-</div>
+   
 
 {% endblock %}

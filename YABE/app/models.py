@@ -3,6 +3,9 @@ Definition of models.
 """
 
 from django.db import models
+from django.core.files.storage import FileSystemStorage
+
+fs = FileSystemStorage(location='data/')
 
 # User table, which stores specific user meta data
 class YabeUser(models.Model):
@@ -20,7 +23,7 @@ class Item(models.Model):
     category = models.CharField(max_length = 20)
     subcategory = models.CharField(max_length = 20)
     seller = models.ForeignKey(YabeUser,on_delete=models.DO_NOTHING)
-    picture = models.ImageField()
+    picture = models.ImageField(upload_to=fs,default = 'static/app/images/YABE.png')
     description = models.TextField()
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits = 10,decimal_places = 2)

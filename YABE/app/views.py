@@ -238,6 +238,7 @@ def itemPage(request,itemIdx):
         return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
+    print(item.picture)
     if request.method == 'POST':
         form = app.forms.BuyItemForm(request.POST)
         form.quantity = forms.IntegerField(label = _('How many do you want'),min_value = 1,max_value = item.quantity,
@@ -485,7 +486,8 @@ def addItem(request):
             pic = form.cleaned_data.get('picture')
             description = form.cleaned_data.get('description')
             category = form.cleaned_data.get('category')
-            
+            print(pic)
+            print('show pic')
             price = form.cleaned_data.get('price')
 
             # add item to DB

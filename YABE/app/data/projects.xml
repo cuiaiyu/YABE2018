@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<projects>
+
+  <project
+title="System Programming"
+content="The class makes me quit system taught by Prof. McDaniel"
+detail_link="https://github.com/cuiaiyu/simpleDeadlockSolution"
+source_link="https://github.com/cuiaiyu/simpleDeadlockSolution"
+year="2016"
+month="4"
+category="CS"
+    ></project>
+
+  <project
+title="Operating System"
+content="The professor is not in teaching mode at all"
+detail_link="https://github.com/cuiaiyu/ThreadScheduler"
+source_link="https://github.com/cuiaiyu/ThreadScheduler"
+year="2017"
+month="3"
+category="CS"
+    ></project>
+
+  <project
+title="Computer Vision"
+content="Bob is the best."
+detail_link="https://github.com/cuiaiyu/CartridgeDriver"
+source_link="https://github.com/cuiaiyu/ThreadScheduler"
+year="2016"
+month="12"
+category="CS"
+    ></project>
+
+  <project
+  title="Linear Algebra"
+  content="Make your life eaiser"
+  detail_link="https://github.com/cuiaiyu/SudokuSolver"
+  source_link="https://github.com/cuiaiyu/SudokuSolver"
+  year="2016"
+  month="9"
+  category="Math"
+    ></project>
+
+  <project
+title="Probability"
+content="Good luck if you take with Miller"
+ detail_link="https://github.com/cuiaiyu/NaiveBayesSpamFilter"
+source_link="https://github.com/cuiaiyu/RandomTextGenerator"
+year="2016"
+month="11"
+category="Math"
+    ></project>
+
+  <project
+    title="Intercultural Communication"
+    content="I would have liked it if Ines had not grade my assignment a week before the deadline"
+    detail_link="https://github.com/cuiaiyu/NaiveBayesSpamFilter"
+    source_link="https://github.com/cuiaiyu/NaiveBayesSpamFilter"
+    year="2016"
+    month="10"
+    category="CAS"
+  ></project>
+
+  <project
+    title="Jazz"
+    content="I dont know how i passed it"
+    detail_link="http://aiyucuiblog.azurewebsites.net/2016/06/22/acblogdjango-a-personal-website-template/"
+    source_link="https://github.com/cuiaiyu/ACBlogDjango/tree/master/ACBlogDjango"
+    year="2016"
+    month="6"
+    category="Art"
+    >
+  </project>
+
+
+
+
+
+  <project
+    title="Test Project 2"
+    content="This is a test 2"
+    detail_link="#"
+    source_link="#"
+    year="2014"
+    month="12"
+    category="test"
+    ></project>
+
+</projects>

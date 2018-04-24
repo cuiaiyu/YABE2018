@@ -3,7 +3,7 @@
 {% block content %}
 
 <h2>Add Item to Bidding</h2>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Add Item to Bidding</button>

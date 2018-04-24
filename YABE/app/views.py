@@ -22,10 +22,12 @@ from django.core.mail import send_mail
 import json
 import smtplib
 from email.mime.text import MIMEText
+from YABE.settings import MEDIA_ROOT
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+import os
 
 
 
@@ -34,8 +36,8 @@ def home(request):
     """Renders the home page."""
     assert isinstance(request, HttpRequest)
     print('render home')
-    print(request.user)
-    print(type(request.user))
+    YABEinitialize(request)
+    print('YABE is initalized')
     return render(
         request,
         'app/index.html',
@@ -238,7 +240,7 @@ def itemPage(request,itemIdx):
         return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
-    print(item.picture)
+    print(item.picture.url)
     if request.method == 'POST':
         form = app.forms.BuyItemForm(request.POST)
         form.quantity = forms.IntegerField(label = _('How many do you want'),min_value = 1,max_value = item.quantity,
@@ -260,10 +262,11 @@ def itemPage(request,itemIdx):
                 return redirect('research',code = 10)
             DBAPI.buyItem(item = item, buyer = buyer_id,seller = seller_id,quantity = quant, shipfrom = shipfrom, shipto=shipto)
             if wannaDonate:
-                donation = app.models.Item.objects.get(name = 'YABEDONATION')
+                donation = app.models.Item.objects.get(name = 'YABEDONATION',seller = app.models.YabeUser.objects.get(yabeusername = 'YABEADMIN'))
                 donator = donation.seller
                 DBAPI.buyItem(item = donation, 
                               buyer = buyer_id,seller = donator,quantity = 1, shipfrom = shipfrom, shipto=shipto)
+            return redirect('research',code = 11)
     else:
         form = app.forms.BuyItemForm()
         form.quantity = forms.IntegerField(label = _('How many do you want'),min_value = 1,max_value = item.quantity,
@@ -272,12 +275,10 @@ def itemPage(request,itemIdx):
                                     'placeholder': ['max = ',str(item.quantity)],}))
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     hasBought = (list(app.models.Order.objects.filter(buyer_id = buyer,item_id = item)) != [])
-    print(hasBought)
     comments = list(app.models.Review.objects.filter(buyer = buyer,item = item))
-    print(comments)
-    print('hhhhhhhhhhhh')
     hasCommented = (comments == [])
-    (print(hasCommented))
+    print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    print('sigh')
     return render(
         request,
          'app/ItemPage.html',
@@ -321,7 +322,8 @@ def biddingItemPage(request,itemIdx):
                  return redirect('research',code = 1)
             elif code == 2:
                  return redirect('research', code = 2)
-
+            elif code == 3:
+                return redirect('research', code = 11)
     else:
         form = app.forms.BiddingItemForm()
 
@@ -382,7 +384,7 @@ def research(request,code):
                 return redirect('research',code = 6)
         if list(app.models.PaymentMethod.objects.filter(holder = curruser)) == []:
                 return redirect('research',code = 7)
-        vip = app.models.Item.objects.get(name = 'YABEVIP')
+        vip = app.models.Item.objects.get(name = 'YABEVIP',seller = app.models.YabeUser.objects.get(yabeusername = 'YABEADMIN'))
         us = vip.seller
         shipfrom = DBAPI.user_getAllAddr(us)[0]
         shipto = DBAPI.user_getAllAddr(curruser)[0]
@@ -395,6 +397,8 @@ def research(request,code):
          message = "Please log in to access more features!"
     elif code == "10":
          message = "Your quantity exceed the maximum in stock!"
+    elif code == '11':
+         message = "You bought this product successfully!"
 
     return render(
         request,
@@ -478,14 +482,15 @@ def signup(request):
 # Add A Product
 def addItem(request):
     if request.method == 'POST':
-        form = app.forms.AddItemForm(request.POST)
+        form = app.forms.AddItemForm(request.POST,request.FILES)
         if form.is_valid():
             itemname = form.cleaned_data.get('itemname')
             quantity = form.cleaned_data.get('quantity')
             isVirtual = form.cleaned_data.get('isVirtual')
-            pic = form.cleaned_data.get('picture')
+            pic = form.cleaned_data['picture']
             description = form.cleaned_data.get('description')
             category = form.cleaned_data.get('category')
+            print('pic:')
             print(pic)
             print('show pic')
             price = form.cleaned_data.get('price')
@@ -514,7 +519,7 @@ def addItem(request):
 # Add A Bidding Product
 def addBiddingItem(request):
     if request.method == 'POST':
-        form = app.forms.AddBiddingItemForm(request.POST)
+        form = app.forms.AddBiddingItemForm(request.POST,request.FILES)
         if form.is_valid():
             itemname = form.cleaned_data.get('itemname')
             isVirtual = form.cleaned_data.get('isVirtual')
@@ -538,7 +543,6 @@ def addBiddingItem(request):
         form = app.forms.AddBiddingItemForm()
     return render(request, 'app/addBiddingItem.html', {'form': form},)
 
-
 def addAddr(request):
     if request.method == 'POST':
         form = app.forms.AddressForm(request.POST)
@@ -555,6 +559,7 @@ def addAddr(request):
     else:
         form = app.forms.AddressForm()
     return render(request, 'app/addAddr.html', {'form': form})
+
 
 
 def addPaymentMethod(request):
@@ -594,6 +599,32 @@ def addRating(request,item_id):
     else:
         form = app.forms.RatingForm()
     return render(request, 'app/leaveRating.html', {'form': form})
+
+def YABEinitialize(request):
+    if list(app.models.YabeUser.objects.filter(yabeusername = 'YABEADMIN')) == []:
+        yabe = app.models.YabeUser.objects.create(yabeusername = 'YABEADMIN',
+                                           hasMembership = True,
+                                           isSeller = True,
+                                           balance = 0)
+        app.models.Item.objects.create(name = 'YABEDONATION',
+                                       category = 'YABE',
+                                       subcategory = 'YABE',
+                                       seller = yabe,
+                                       description = '',
+                                       isVirtual = True,
+                                       quantity = 99999,
+                                       price = 1)
+        app.models.Item.objects.create(name = 'YABEVIP',
+                                       category = 'YABE',
+                                       subcategory = 'YABE',
+                                       seller = yabe,
+                                       description = '',
+                                       quantity = 99999,
+                                       isVirtual = True,
+                                       price = 100)
+
+    return []
+
 
 
 

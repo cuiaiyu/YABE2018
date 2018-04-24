@@ -50,14 +50,12 @@ class AddItemForm(forms.Form):
 
     isVirtual = forms.BooleanField(label = _('is Virtual Item?: '),
                                     required=False)
-    
+    '''
     picture = forms.ImageField(label=_('Description Image'),
                                required=False,
                               error_messages = {'invalid':_("Image files only")})
     '''
-    picture = forms.FileField(
-        label='Select a Image',)
-    '''
+    picture = forms.ImageField()
     description = forms.CharField(max_length=1000,
                                widget=forms.TextInput({
                                    'class': 'form-control',
@@ -76,10 +74,8 @@ class AddBiddingItemForm(forms.Form):
     isVirtual = forms.BooleanField(label = _('is Virtual Item?: '),
                                     required=False)
 
-    picture = forms.ImageField(label=_('Description Image'),
-                                required=False,
-                                error_messages = {'invalid':_("Image files only")},
-                                widget=forms.FileInput())
+    picture = forms.ImageField()
+
     description = forms.CharField(max_length=1000,
                                 widget=forms.TextInput({
                                     'class': 'form-control',

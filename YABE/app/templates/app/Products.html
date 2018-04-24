@@ -13,7 +13,9 @@
             {% if product.name != "YABEVIP" and product.name != "YABEDONATION" %}
                 <div class="project-box">
                     <div id="item_picture_div">
-                        <img  src="{{host_info.photoPath}}" />
+                        {% if product.picture %}
+                        <img  src="{{product.picture.url}}" style="height:100%;width:100%"/>
+                        {% endif %}
                     </div>
                     <div class="item_descrip_div">
                         <div class="project-box-date">${{product.price}}</div>

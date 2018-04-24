@@ -13,7 +13,7 @@ import app.views
 # from django.conf.urls import include
 # from django.contrib import admin
 # admin.autodiscover()
-
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns = [
     # Examples:
     url(r'^signup/$', app.views.signup, name='signup'),

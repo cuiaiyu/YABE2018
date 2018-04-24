@@ -205,11 +205,13 @@ def bidItem(item,buyer,price,shipfrom,shipto):
     elif price >= biddingItem.max_price:
         #To buy
         winBidding(item,buyer,price,shipfrom,shipto)
+        return 3
     else:
         app.models.BiddingRecord.objects.create(bid_item = biddingItem,
                                                 buyer = buyer,
                                                 status = "waiting",
                                                 bid_price = price)
+        return 4
 
 
 def winBidding(item,buyer,price,shipfrom,shipto):

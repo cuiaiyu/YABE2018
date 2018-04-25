@@ -35,6 +35,9 @@
                     <li><a href="{% url 'login' %}">LOG IN</a></li>
                     {% else %}
                     <li><a href="{% url 'about' %}">My Account</a></li>
+                    <li><a href="{% url 'teleMarketReport' %}">TeleMarket Rpt</a></li>
+                    
+                    <li><a href="{% url 'biddingStat' %}">Auction Stat</a></li>
                     <li><a href="{% url 'logout' %}">LOG OUT</a></li>
                     {% endif %}
                 </ul>

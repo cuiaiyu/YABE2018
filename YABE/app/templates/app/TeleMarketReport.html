@@ -1,0 +1,39 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>User Bidding Behavior in the past week [Smirk Face]</h2>
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Annual Income</th>
+            <th># Total Bidding</th>
+            <th># Won Bidding</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for user in users %}
+        {% if user.name != 'YABEADMIN' %}
+        <tr>
+            <td>{{user.name}}</td>
+            <td>{{user.addr}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.age}}</td>
+            <td>{{user.gender}}</td>
+            <td>{{user.annualIncome}}</td>
+            <td>{{user.totalBidding}}</td>
+            <td>{{user.wonBidding}}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

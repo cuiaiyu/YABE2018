@@ -12,6 +12,9 @@ class YabeUser(models.Model):
     yabeusername = models.CharField(max_length = 10,primary_key = True)
     #email = models.EmailField()
     hasMembership = models.BooleanField()
+    age = models.IntegerField()
+    gender = models.CharField(max_length = 10)
+    annualIncome = models.CharField(max_length = 20)
     isSeller = models.BooleanField(default = False)
     balance = models.DecimalField(max_digits = 10,decimal_places = 2)
    
@@ -55,7 +58,7 @@ class Addr(models.Model):
     city = models.CharField(max_length = 20)
     state = models.CharField(max_length = 15)
     zipcode = models.CharField(max_length = 5)
-    #email = models.EmailField()
+    email = models.EmailField(default = 'yabe@yabe.com')
     holder = models.ForeignKey(YabeUser,on_delete = models.CASCADE)
 
 class Order(models.Model):

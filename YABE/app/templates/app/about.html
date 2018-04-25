@@ -15,12 +15,26 @@
             <img class="bio-photo" src="{{host_info.photoPath}}" /><br /><br />
             <h2 class="bio-name">{{curruser}}</h2>
             <h4 class="bio-name">Current Balance: ${{yabeuser.balance}}</h4>
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+                    <li class="menu-item"> <a href="{% url 'payBill' bill=100 %}">Save $100</a></li>
+                    <li class="menu-item"><a href="{% url 'payBill' bill=500 %}">Save $500</a></li>
+                    <li class="menu-item"> <a href="{% url 'payBill' bill=1000 %}">Save $1000</a></li>
+                    <li class="menu-item"><a href="{% url 'payBill' bill=5000 %}">Save $5000</a></li>
+                </ul>
+            </div>
             <br/>
             {% if yabeuser.hasMembership == True %}
             <!--More Bar-->
             <h4 class="bio-name">You are our VIP user! </h4>
             you can have a 5% cashback for each of your purchase!<br />
-            You current cashback is: ${{cashback}}  <a href="{% url 'cashback' %}">Check Cashback Detail</a>
+            You current cashback is: ${{cashback}}  
+            <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
+                <ul>
+                    <li class="menu-item"> <a href="{% url 'cashback' %}">Check Cashback Detail</a></li>
+                    <li class="menu-item"><a href="{% url 'research' code=13 %}">Save cashback into Account</a></li>
+                </ul>
+            </div>
             {% else %}
             Wanna become an VIP user by paying $100? <a href="{% url 'research' code=8 %}">Yes!</a>
             {% endif %}
@@ -31,8 +45,9 @@
             <!--More Bar-->
             <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
                 <ul>
-                    <li class="menu-item"><a href="{% url 'addAddr' %}">Add Address</a></li>
-                    <li class="menu-item"><a href="{% url 'addPaymentMethod' %}">Add Payment Method</a></li>
+                    <li class="menu-item"><a href="{% url 'addAddr' %}">Edit Address</a></li>
+                    <li class="menu-item"><a href="{% url 'addPaymentMethod' %}">Edit Payment Method</a></li>
+                     <li class="menu-item"><a href="{% url 'addUser' %}">Edit My Info</a></li>
                 </ul>
             </div>
             <br />
@@ -70,6 +85,7 @@
             <th>City</th>
             <th>State</th>
             <th>Zipcode</th>
+            <th>Email</th>
         </tr>
     </thead>
 
@@ -81,6 +97,7 @@
             <td>{{addr.city}}</td>
             <td>{{addr.state}}</td>
             <td>{{addr.zipcode}}</td>
+            <td>{{addr.email}}</td>
         </tr>
         {% endfor %}
         </tbody>

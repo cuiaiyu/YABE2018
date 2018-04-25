@@ -13,6 +13,9 @@ CATAGORY_CHOICES = [('1','Bookstore'),('2','Collectibles & Art'),
                ('3','Electronic'),('4','Fashion'),
                ('5','Home & Garden'),('6','Sporting Goods'),
                ('7','Toys & Hobbies'),('8','Others')]
+GENDER_CHOICES = [('1','Male'),('2','Female')]
+INCOME_CHOICES = [('1','<50,000'),('2','50,000-100,000'),('3','100,000-200,000'),('4','>200,000')]
+
 
 class BootstrapAuthenticationForm(AuthenticationForm):
     """Authentication form which uses boostrap CSS."""
@@ -24,6 +27,7 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                                widget=forms.PasswordInput({
                                    'class': 'form-control',
                                    'placeholder':'Password'}))
+    
 
     class RegisterNewUser(AuthenticationForm):
         """Authentication form which uses boostrap CSS."""
@@ -35,7 +39,12 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                                    widget=forms.PasswordInput({
                                        'class': 'form-control',
                                        'placeholder':'Password'}))
+class AddUserForm(forms.Form):
+    gender = forms.ChoiceField(widget=forms.RadioSelect, choices=GENDER_CHOICES)
+    annualIncome = forms.ChoiceField(widget=forms.RadioSelect, choices=INCOME_CHOICES)
+    age = forms.IntegerField(max_value = 120, min_value = 5)
 
+    
 class AddItemForm(forms.Form):
     itemname= forms.CharField(max_length=254,
                                widget=forms.TextInput({
@@ -121,12 +130,14 @@ class AddressForm(forms.Form):
                                     widget = forms.NumberInput({
                                     'class': 'form-control',
                                     'placeholder': '12345'}))
+    email = forms.EmailField()
 
 
 class PaymentMethodForm(forms.Form):
-    cardnumber = forms.CharField(label = _('CardNumber'),max_length=16,
+    cardnumber = forms.CharField(label = _('CardNumber'),max_length=16,min_length=16,
                                 widget=forms.TextInput({
                                     'class': 'form-control',
+                                    'attrs':{'type':'number'},
                                     'placeholder': '16 digits card number'}))
     cardtype = forms.ChoiceField(label = _('Select Card Type'),
                               widget=forms.RadioSelect, choices=[('1','Visa'),('2','Discover'),('3','Yabe')])

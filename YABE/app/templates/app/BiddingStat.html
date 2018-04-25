@@ -1,0 +1,27 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>User Bidding Behavior in the past week [Smirk Face]</h2>
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Catagory</th>
+            <th>Total Item Available</th>
+            <th>Total Bidding</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for cata in catas %}
+        <tr>
+            <td>{{cata.name}}</td>
+            <td>{{cata.availableItem}}</td>
+            <td>{{cata.totalBidding}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

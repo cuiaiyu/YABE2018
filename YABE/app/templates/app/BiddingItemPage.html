@@ -11,8 +11,10 @@
 -->
     <div id="middle_div">
       <div id="item_detailed_pic_div">
-        <img src = "{{item.picture.url}}" width="300" height="300">
-      </div>
+        {% if item.picture %}
+                <img src = "{{item.picture.url}}" width="300" height="300">
+          {% endif %}
+          </div>
 
       <div id="item_detailed_descript_div">
         <h2>{{item.name}}</h2>sold by {{item.seller.yabeusername}}

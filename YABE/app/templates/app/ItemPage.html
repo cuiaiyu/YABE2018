@@ -11,7 +11,9 @@
     <div id="middle_div">
       <div id="item_detailed_pic_div">
          <!-- given by user -->
-        <img src = "{{item.picture.url}}" width="300" height="300">
+          {% if item.picture %}
+                <img src = "{{item.picture.url}}" width="300" height="300">
+          {% endif %}
       </div>
 
       <div id="item_detailed_descript_div">

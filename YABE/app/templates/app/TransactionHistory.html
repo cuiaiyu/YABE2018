@@ -13,6 +13,7 @@
             <th>Date</th>
             <th>Quantity</th>
             <th>Single Cost</th>
+            <th>Shipping Status</th>
         </tr>
     </thead>
 
@@ -25,6 +26,11 @@
             <td>{{order.datetime}}</td>
             <td>{{order.quantity}}</td>
             <td>{{order.item_id.price}}</td>
+            {% if curruser == order.seller_id.yabeusername and order.status == 'purchased' %}
+            <td><a href="{% url 'shipping' orderIdx=order.id code=2 %}">Ship it now!</a></td>
+            {% else %}
+            <td>{{order.status}}</td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>

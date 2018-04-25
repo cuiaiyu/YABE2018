@@ -10,8 +10,8 @@ import app.models
 ###################################
 
 # Create New Users
-def user_create(name):
-    return app.models.YabeUser.objects.create(yabeusername = str(name),hasMembership = False,isSeller = False,balance = 0)
+def user_create(name,gender,age,annualIncome):
+    return app.models.YabeUser.objects.create(yabeusername = str(name),hasMembership = False,isSeller = False,balance = 0,gender = gender,age = age, annualIncome = annualIncome)
 
 #------------------------------------------------------------------------------------
 # Get all address of a user
@@ -173,7 +173,7 @@ def biddingRecord_getBuyerByItem(item):
     return []
 
 #--------------------------------------------------------------------------------
-def buyItem(item,buyer,seller,quantity,shipfrom,shipto):
+def  buyItem(item,buyer,seller,quantity,shipfrom,shipto):
     # create transaction:
     myorder = app.models.Order.objects.create(item_id = item,
                                     buyer_id = buyer,
@@ -194,6 +194,8 @@ def buyItem(item,buyer,seller,quantity,shipfrom,shipto):
         app.models.Cashback.objects.create(ammount = quantity*item.price/20,
         order = myorder,
         buyer = buyer)
+    return myorder
+
 
 
 def bidItem(item,buyer,price,shipfrom,shipto):
@@ -204,8 +206,8 @@ def bidItem(item,buyer,price,shipfrom,shipto):
         return 2
     elif price >= biddingItem.max_price:
         #To buy
-        winBidding(item,buyer,price,shipfrom,shipto)
-        return 3
+        myorder = winBidding(item,buyer,price,shipfrom,shipto)
+        return myorder
     else:
         app.models.BiddingRecord.objects.create(bid_item = biddingItem,
                                                 buyer = buyer,
@@ -232,10 +234,15 @@ def winBidding(item,buyer,price,shipfrom,shipto):
      item.quantity = 0
      item.save()
      biddingItem.save()
+     item.price = price
+     item.save()
 
      buyer.balance = buyer.balance - price
+     buyer.save()
      item.seller.balance = item.seller.balance + price
      item.seller.save()
+     return myorder
+
 
      if buyer.hasMembership == True and item.name != 'YABEDONATION' and item.name != 'YABEVIP':
         app.models.Cashback.objects.create(ammount = item.price/20,
@@ -245,7 +252,8 @@ def winBidding(item,buyer,price,shipfrom,shipto):
      for record in app.models.BiddingRecord.objects.filter(bid_item = biddingItem):
         if record.buyer != buyer:
             record.status = "lost"
-            record.save();
+            record.save()
+     return myorder
 
 
 def bid_getHighestPrice(biddingItem):

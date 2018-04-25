@@ -5,7 +5,7 @@ Definition of views.
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.template import RequestContext
-from datetime import datetime
+from datetime import datetime,timedelta
 import smtplib
 from django.core.serializers import json
 from YABE import BasicData
@@ -165,6 +165,77 @@ def transactionHistory(request,userType):
             'myorders':myorders,
         }
     )
+
+def teleMarketReport(request):
+    '''Rends Project Page'''
+    curruser = request.user.username
+    #user = app.models.YabeUser.objects.get(yabeusername = curruser)
+    users = list(app.models.YabeUser.objects.all())
+    userlist = []
+    cnt = 0;
+    for user in users:
+        curruser = {'name':user.yabeusername,
+                    'annualIncome':user.annualIncome,
+                    'gender':user.gender,
+                    'age':user.age,
+                    'email':'',
+                    'totalBidding':len(list(app.models.BiddingRecord.objects.filter(buyer = user,bidding_date__gt = datetime.now()-timedelta(days = 7)))),
+                    'wonBidding':len(list(app.models.BiddingRecord.objects.filter(buyer = user,status = 'Win',bidding_date__gt = datetime.now()-timedelta(days = 7)))),
+                    'addr':''
+                    }
+        email = "N/A"
+        if list(app.models.Addr.objects.filter(holder = user)) != []:
+            address = list(app.models.Addr.objects.filter(holder = user))[0]
+            email = address.email
+            addr = "".join([address.city,', ',address.state])
+        curruser['email'] = email
+        curruser['addr'] = addr
+        userlist.append(curruser)
+    return render(
+        request,
+         'app/TeleMarketReport.html',
+        context = 
+        {
+            'host_info':BasicData.HOST,
+            'year':datetime.now().year,
+            'curr_selection':'',#curr_selection,
+            'curruser':request.user.username,
+            'users':userlist
+        }
+    )
+
+def biddingStat(request):
+    '''Rends Project Page'''
+    curruser = request.user.username
+    #user = app.models.YabeUser.objects.get(yabeusername = curruser)
+    biddingitems = list(app.models.BiddingItem.objects.all())
+    CATAGORY_CHOICES = [('1','Bookstore'),('2','Collectibles & Art'),
+               ('3','Electronic'),('4','Fashion'),
+               ('5','Home & Garden'),('6','Sporting Goods'),
+               ('7','Toys & Hobbies'),('8','Others')]
+    catas = []
+    for i in range(0,8):
+        cata = {
+            'name': CATAGORY_CHOICES[i][1],
+            'availableItem':len([j for j in list(app.models.BiddingItem.objects.filter(expire_date__gt = datetime.now())) if j.item.category == CATAGORY_CHOICES[i][1]]),
+            'totalBidding': len([j for j in list(app.models.BiddingRecord.objects.filter(bidding_date__gt = datetime.now() - timedelta(days = 7))) if j.bid_item.item.category == CATAGORY_CHOICES[i][1]]),
+            }
+        catas.append(cata)
+
+
+    return render(
+        request,
+         'app/BiddingStat.html',
+        context = 
+        {
+            'host_info':BasicData.HOST,
+            'year':datetime.now().year,
+            'curr_selection':'',#curr_selection,
+            'curruser':request.user.username,
+            'catas':catas
+        }
+    )
+
 def cashbackHistory(request):
     '''Rends Project Page'''
     curruser = request.user.username
@@ -240,7 +311,6 @@ def itemPage(request,itemIdx):
         return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
-    print(item.picture.url)
     if request.method == 'POST':
         form = app.forms.BuyItemForm(request.POST)
         form.quantity = forms.IntegerField(label = _('How many do you want'),min_value = 1,max_value = item.quantity,
@@ -248,10 +318,13 @@ def itemPage(request,itemIdx):
                                     'class': 'form-control',
                                     'placeholder': ['max = ',str(item.quantity)],}))
         if form.is_valid():
+            if buyer.balance < -100:
+                return redirect('research',code = 12)
             if list(app.models.Addr.objects.filter(holder = buyer)) == []:
                 return redirect('research',code = 6)
             if list(app.models.PaymentMethod.objects.filter(holder = buyer)) == []:
                 return redirect('research',code = 7)
+
             quant = form.cleaned_data.get('quantity')
             wannaDonate =  form.cleaned_data.get('hasDonate')
             buyer_id = app.models.YabeUser.objects.get(yabeusername = request.user.username)
@@ -260,13 +333,13 @@ def itemPage(request,itemIdx):
             shipto = DBAPI.user_getAllAddr(buyer_id)[0]
             if quant > item.quantity:
                 return redirect('research',code = 10)
-            DBAPI.buyItem(item = item, buyer = buyer_id,seller = seller_id,quantity = quant, shipfrom = shipfrom, shipto=shipto)
+            order = DBAPI.buyItem(item = item, buyer = buyer_id,seller = seller_id,quantity = quant, shipfrom = shipfrom, shipto=shipto)
             if wannaDonate:
                 donation = app.models.Item.objects.get(name = 'YABEDONATION',seller = app.models.YabeUser.objects.get(yabeusername = 'YABEADMIN'))
                 donator = donation.seller
                 DBAPI.buyItem(item = donation, 
                               buyer = buyer_id,seller = donator,quantity = 1, shipfrom = shipfrom, shipto=shipto)
-            return redirect('research',code = 11)
+            return redirect('shipping',orderIdx = order.id, code=1)
     else:
         form = app.forms.BuyItemForm()
         form.quantity = forms.IntegerField(label = _('How many do you want'),min_value = 1,max_value = item.quantity,
@@ -277,8 +350,6 @@ def itemPage(request,itemIdx):
     hasBought = (list(app.models.Order.objects.filter(buyer_id = buyer,item_id = item)) != [])
     comments = list(app.models.Review.objects.filter(buyer = buyer,item = item))
     hasCommented = (comments == [])
-    print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    print('sigh')
     return render(
         request,
          'app/ItemPage.html',
@@ -301,11 +372,14 @@ def biddingItemPage(request,itemIdx):
         return redirect('research',code = 9)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     item = app.models.Item.objects.get(id = itemIdx);
+
     biddingItem = app.models.BiddingItem.objects.get(item = item)
 
     if request.method == 'POST':
         form = app.forms.BiddingItemForm(request.POST)
         if form.is_valid():
+            if buyer.balance < -100:
+                 return redirect('research',code = 12)
             if list(app.models.Addr.objects.filter(holder = buyer)) == []:
                 return redirect('research',code = 6)
             if list(app.models.PaymentMethod.objects.filter(holder = buyer)) == []:
@@ -322,8 +396,10 @@ def biddingItemPage(request,itemIdx):
                  return redirect('research',code = 1)
             elif code == 2:
                  return redirect('research', code = 2)
-            elif code == 3:
-                return redirect('research', code = 11)
+            elif code == 4:
+                a = 1
+            else:
+                return redirect('shipping',orderIdx = code.id, code = 1)
     else:
         form = app.forms.BiddingItemForm()
 
@@ -347,7 +423,50 @@ def biddingItemPage(request,itemIdx):
             'biddingHistory':records,
         }
     )
-        
+def shipping(request,orderIdx,code):
+    code = str(code)
+    user = app.models.YabeUser.objects.get(yabeusername = request.user.username)
+    order = app.models.Order.objects.get(id = orderIdx)
+    addr = app.models.Addr.objects.filter(holder = user)[0]
+    message = ""
+    if code == '1':
+        address = ''.join([addr.street1,', ', addr.city, ',', addr.state, ', ', addr.zipcode])
+        massage = ''
+        if not order.item_id.isVirtual:
+            if user.hasMembership:
+                message = ''.join(['Purchase successfully! Free ship to your address: ',address])
+            else:
+                message = ''.join(['Purchase successfully! Ship with $10 to your address: ',address])
+                adminseller = app.models.YabeUser.objects.get(yabeusername = 'YABEADMIN')
+                shiporder = DBAPI.buyItem(buyer = user,
+                                                seller = adminseller,
+                                                item = app.models.Item.objects.get(name = 'YABESHIPPING',seller=adminseller),
+                                                shipfrom = app.models.Addr.objects.filter(holder = adminseller)[0],
+                                                shipto = addr,
+                                                quantity = 1)
+                shiporder.status = 'Shipped'
+                shiporder.save()
+        else:
+            message = ''.join(['Purchase succefully! Your item will be delivered to your email: ', addr.email])
+    elif code == '2':
+        order.status = "Shipped"
+        order.save()
+        message = "Shipping successfully!"
+
+    return message
+
+def shipPage(request,orderIdx,code):
+    """Renders the resume page."""
+    return render(
+        request,
+        'app/research.html',
+        context = 
+        {
+            'year':datetime.now().year,            
+            'curruser':request.user.username,
+            'message':shipping(request,orderIdx,code),
+        }
+    )        
         
 
 def research(request,code):
@@ -399,6 +518,18 @@ def research(request,code):
          message = "Your quantity exceed the maximum in stock!"
     elif code == '11':
          message = "You bought this product successfully!"
+    elif code == '12':
+        message = "You account seems overdue $100. Please check your balance before you take any operation. :-)"
+    elif code == '13':
+        yabeUser = app.models.YabeUser.objects.get(yabeusername = request.user.username)
+        cashback = 0
+        cashbacklist = list(app.models.Cashback.objects.filter(buyer = yabeUser))
+        for cb in cashbacklist:
+            cashback = cashback + cb.ammount
+            cb.delete()
+        yabeUser.balance = yabeUser.balance + cashback
+        yabeUser.save()
+        message = "".join(['You save cashback $', str(cashback), ' to your account'])
 
     return render(
         request,
@@ -411,21 +542,47 @@ def research(request,code):
         }
     )
 
+def payBill(request,bill):
+    """Renders the resume page."""
+    yabeUser = app.models.YabeUser.objects.get(yabeusername = request.user.username)
+    pml = list(app.models.PaymentMethod.objects.filter(holder = yabeUser))
+    if pml == []:
+        return redirect('research',code = 7)
+    pm = pml[0]
+    yabeUser.balance = yabeUser.balance + int(bill);
+    yabeUser.save()
+    message = "".join(['You successfully save $',str(bill),' to your account from your card: ', str(pm.cardNumber),'!'])
+    return render(
+        request,
+        'app/PayBill.html',
+        context = 
+        {
+            'year':datetime.now().year,            
+            'curruser':request.user.username,
+            'message':message,
+        }
+    )
+
 def buyitnow(request,itemIdx):
     """Renders the resume page."""
-    if request.user.username == '':
-        return redirect('research',code = 9)
-   
     item = app.models.Item.objects.get(id = itemIdx)
     biddingItem = app.models.BiddingItem.objects.get(item = item)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
-    DBAPI.winBidding(item = item,
+
+    if request.user.username == '':
+        return redirect('research',code = 9)
+    if buyer.balance < -100:
+        return redirect('research',code = 12)
+   
+    
+    order = DBAPI.winBidding(item = item,
                buyer = buyer,
                price = biddingItem.max_price,
                shipfrom = DBAPI.user_getAllAddr(item.seller)[0],
                shipto = DBAPI.user_getAllAddr(buyer)[0])
-    message = ['You Bought item',item.name,' now!']
-
+    shipMsg = shipping(request,order.id,1)
+    message = ''.join(['You Bought the bidding item ',item.name,' now! ',shipMsg])
+    
     return render(
         request,
         'app/BuyItNow.html',
@@ -468,12 +625,13 @@ def signup(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+           
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             print(type(request.user))
-            DBAPI.user_create(username)
+            DBAPI.user_create(username,gender = 'Male', age = 10, annualIncome = '<50,000')
             login(request, user) # login in defined in this page
-            return redirect('home')
+            return redirect('addUser')
 
     else:
         form = UserCreationForm()
@@ -552,13 +710,51 @@ def addAddr(request):
             city = form.cleaned_data.get('city')
             state = form.cleaned_data.get('state')
             zipcode = str(form.cleaned_data.get('zipcode'))
+            email = str(form.cleaned_data.get('email'))
             username = request.user.username;
-            DBAPI.user_createAddr(street1 = street1,street2=street2,state = state,city = city,zipcode = zipcode,username = username)
+            curraddr = list(app.models.Addr.objects.filter(holder = app.models.YabeUser.objects.get(yabeusername = request.user.username)))
+            if curraddr == []:
+                app.models.Addr.objects.create(street1 = street1,street2=street2,state = state,city = city,zipcode = zipcode,
+                                               holder = app.models.YabeUser.objects.get(yabeusername = request.user.username),
+                                               email = email)
+            else:
+                addr =  app.models.Addr.objects.get(holder = app.models.YabeUser.objects.get(yabeusername = request.user.username))
+                addr.street1 = street1
+                addr.street2 = street2
+                addr.state = state
+                addr.city = city
+                addr.email = email
+                addr.zipcode = zipcode
+                addr.save()
+
             return redirect('research', code = 4)
 
     else:
         form = app.forms.AddressForm()
     return render(request, 'app/addAddr.html', {'form': form})
+
+def addUser(request):
+    username = request.user.username;
+    user = app.models.YabeUser.objects.get(yabeusername = username)
+    if request.method == 'POST':
+        form = app.forms.AddUserForm(request.POST)
+        if form.is_valid():
+            gender = form.cleaned_data.get('gender')
+            if str(gender) == '1':
+                gender = 'Male'
+            else:
+                gender = 'Female'
+            INCOME_CHOICES = [('1','<50,000'),('2','50,000-100,000'),('3','100,000-200,000'),('4','>200,000')]
+            user.age = form.cleaned_data.get('age')
+            incomeIdx = int(form.cleaned_data.get('annualIncome'))-1
+            user.gender = gender;
+            user.annualIncome = INCOME_CHOICES[incomeIdx][1]
+            user.save()
+            return redirect('home')
+
+    else:
+        form = app.forms.AddUserForm()
+    return render(request, 'app/AddUser.html', {'form': form})
 
 
 
@@ -577,7 +773,14 @@ def addPaymentMethod(request):
             else:
                 type = 'Yabe'
             username = request.user.username;
-            DBAPI.user_createPaymentMethod(cardNumber = cardNumber,pType = type,username = username)
+            curraddr = list(app.models.PaymentMethod.objects.filter(holder = app.models.YabeUser.objects.get(yabeusername = request.user.username)))
+            if curraddr == []:
+                DBAPI.user_createPaymentMethod(cardNumber = cardNumber,pType = type,username = username)
+            else:
+                pm = app.models.PaymentMethod.objects.get(holder = app.models.YabeUser.objects.get(yabeusername = request.user.username))
+                pm.cardNumber = cardNumber
+                pm.type = type
+                pm.save()
             return redirect('research', code = 4)
 
     else:
@@ -601,11 +804,30 @@ def addRating(request,item_id):
     return render(request, 'app/leaveRating.html', {'form': form})
 
 def YABEinitialize(request):
+    # Create admin user YABE if not existing
     if list(app.models.YabeUser.objects.filter(yabeusername = 'YABEADMIN')) == []:
         yabe = app.models.YabeUser.objects.create(yabeusername = 'YABEADMIN',
                                            hasMembership = True,
                                            isSeller = True,
-                                           balance = 0)
+                                           balance = 0,
+                                           age = 100,
+                                           annualIncome = '',
+                                           gender = 'Male'
+                                           )    
+    yabe = app.models.YabeUser.objects.get(yabeusername = 'YABEADMIN')
+    if list(app.models.Addr.objects.filter(holder = yabe)) == []:
+        app.models.Addr.objects.create(street1 = 'YABE',
+                                        city = 'YABE',
+                                        state = 'YABE',
+                                        zipcode = 11111,
+                                        holder = yabe
+                                        )
+    if list(app.models.PaymentMethod.objects.filter(holder = yabe)) == []:
+        app.models.PaymentMethod.objects.create(cardNumber = '1111222233334444',
+                                                type = 'YABE',
+                                                holder = yabe)
+    # Create YABEDONATION, YABEVIP,YABESHIPPING
+    if list(app.models.Item.objects.filter(seller = yabe,name = 'YABEDONATION')) == []:
         app.models.Item.objects.create(name = 'YABEDONATION',
                                        category = 'YABE',
                                        subcategory = 'YABE',
@@ -614,6 +836,7 @@ def YABEinitialize(request):
                                        isVirtual = True,
                                        quantity = 99999,
                                        price = 1)
+    if list(app.models.Item.objects.filter(seller = yabe,name = 'YABEVIP')) == []:
         app.models.Item.objects.create(name = 'YABEVIP',
                                        category = 'YABE',
                                        subcategory = 'YABE',
@@ -622,6 +845,35 @@ def YABEinitialize(request):
                                        quantity = 99999,
                                        isVirtual = True,
                                        price = 100)
+    if list(app.models.Item.objects.filter(seller = yabe,name = 'YABESHIPPING')) == []:
+        app.models.Item.objects.create(name = 'YABESHIPPING',
+                                        category = 'YABE',
+                                        subcategory = 'YABE',
+                                        seller = yabe,
+                                        description = '',
+                                        quantity = 99999,
+                                        isVirtual = True,
+                                        price = 10)
+    biddings = list(app.models.BiddingItem.objects.filter(isSold = False,
+                                                          expire_date__lt = datetime.now()))
+    for bid in biddings:
+        records = list(app.models.BiddingRecord.objects.filter(bid_item = bid))
+        maxbid = records[0]
+        for r in records:
+            if r.bid_price > maxbid.bid_price:
+                maxbid = r
+        order = DBAPI.winBidding(item = bid.item,
+                         buyer = maxbid.buyer,
+                         price = maxbid.price,
+                         shipfrom = list(app.models.Addr.objects.filter(holder = bid.item.seller))[0],
+                         shipto = list(app.models.Addr.objects.filter(holder = maxbid.buyer))[0])
+        maxbid.delete()
+        shipping(request,order.id,1)
+        
+
+       
+
+
 
     return []
 

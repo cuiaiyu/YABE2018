@@ -1,36 +1,44 @@
 ﻿{% extends "app/layout.html" %}
 
 {% block content %}
+<style>
+    .project-box {
+    box-shadow: none;
+    background: #F9B45B;
+    color: black;
+    }
+   
+    .project-box a:hover, a:visited, a:link, a:active {
+        text-decoration: none;    
+    }
 
+</style>
 <!--body-->
-<h2>Products for Selling</h2>
+<!--YABE LOGO-->
+        <img src = "/static/app/images/YABE.png"  width="185" height="110" class="center">
 <div>
 <!-- Project Table - Rendered by Django-->     
     <div>
         <div style="text-align:center; width:80%;">
-            <div class="subtitle-center">{{curr_selection}}</div>
+            <div class="subtitle-center" style="margin-top: 0px;">{{curr_selection}}</div>
             {% for product in products %}
-            {% if product.seller.yabeusername != 'YABEADMIN' %}
+             {% if product.seller.yabeusername != 'YABEADMIN' %}
+             <a href="{% url 'itemPage' itemIdx=product.id %}">
                 <div class="project-box">
                     <div id="item_picture_div">
                         {% if product.picture %}
                         <img  src="{{product.picture.url}}" style="height:100%;width:100%"/>
                         {% endif %}
                     </div>
-                    <div class="item_descrip_div">
-                        <div class="project-box-date">${{product.price}}</div>
-                        <p class="project-box-header">{{product.name}}</p>
-                        <p class="project-box-content">[category: {{product.category}}]{{product.description}}
-                        </p>
-                        <div class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                <li><a href="{% url 'itemPage' itemIdx=product.id %}">Details</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="item_descrip_div" style="overflow: hidden;">
+                    <p class="project-box-header">{{product.name}}</p>
+                    <p class="project-box-content">[category: {{product.category}}]{{product.description}}
+                    </p>
+                    <div class="project-box-date">${{product.price}}</div>
                 </div>
+            </div>
+                 </a><br/>
             {% endif %}
-            <br/>
             {% endfor %}
         </div>
     </div>
@@ -44,7 +52,7 @@
             </div>
                <ul>
         <li><p id="category_name">
-          <a href="/projects/">All</a>
+          <a href="/projects/?category=0">All</a>
           </p>
         </li>
 
@@ -86,12 +94,13 @@
          <li><p id="category_name">
           <a href="/projects/?category=8">Others</a>
           </p>
-        </li>
+        </li>
+
         
       </ul>
             <form type="get" action="." style="margin: 0">
     <input  id="search_box" type="text" name="search_box"  placeholder="Search...">
-    <button id="search_submit" type="submit" class="pure-button">Search</button>
+    <button id="search_submit" type="submit" >Search</button>
 </form>
                 </div>
             
@@ -101,3 +110,4 @@
 
  
 {% endblock %}
+

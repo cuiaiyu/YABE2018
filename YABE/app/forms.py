@@ -148,7 +148,7 @@ class BuyItemForm(forms.Form):
                                     widget = forms.NumberInput({
                                     'class': 'form-control',
                                     'placeholder': '12345'}))
-   hasDonate = isVirtual = forms.BooleanField(label = _('Wanna donate $1 For charity?'),
+   hasDonate = forms.BooleanField(label = _('Wanna donate $1 For charity?'),
                                     required=False)
 
 class BiddingItemForm(forms.Form):

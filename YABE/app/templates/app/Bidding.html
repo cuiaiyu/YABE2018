@@ -10,7 +10,6 @@
         <div style="text-align:center; width:80%;">
             <div class="subtitle-center">{{curr_selection}}</div>
             {% for product in products %}
-            {% if product.seller.yabeusername != 'YABEADMIN' %}
             <div class="project-box" >
                 <div id="item_picture_div">
                     {% if product.picture %}
@@ -32,7 +31,6 @@
             </div>
                 </div>
             </div><br/>
-            {% endif %}
             {% endfor %}
         </div>
     </div>

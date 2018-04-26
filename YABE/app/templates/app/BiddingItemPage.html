@@ -3,36 +3,67 @@
 {% extends "app/layout.html" %}
 
 {% block content %}
+    <style>
+    .button {
+        background-color: #FFC257;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+     .product_name {
+        border-bottom: 1px solid grey;
+        padding-bottom: 10px;
+        font-weight: bold;
+    }
+    .descript_header {
+        font-weight: bold;    
+    }
+    .descript_contents {
+        font-size: 17px;
+    }
+    .stock_left {
+        color: #C42F00;
+        font-weight: bold;
+</style>
   <div id="common_div">
     <img src = "/static/app/images/YABE.png"  width="185" height="110" class="center">
   </div>
   <div id="container">
-   
--->
     <div id="middle_div">
       <div id="item_detailed_pic_div">
-        {% if item.picture %}
-                <img src = "{{item.picture.url}}" width="300" height="300">
-          {% endif %}
-          </div>
+        <img src = "{{item.picture.url}}" width="300" height="300">
+        
+      </div>
 
       <div id="item_detailed_descript_div">
-        <h2>{{item.name}}</h2>sold by {{item.seller.yabeusername}}
-          <p>Item description: {{item.description}}</p><br/>
-
-         <p>Start price: ${{biddingitem.start_price}} </p>
-         <p>Current highest price: ${{curr_price}}</p>    
-         <p>Buy-Out price: ${{biddingitem.max_price}}</p> 
+        <h2 class="product_name">{{item.name}}</h2>
+        <h4 class="descript_header">Seller Information: </h4>
+        <p class="descript_contents">sold by {{item.seller.yabeusername}}</p>
+        <h4 class="descript_header">Item Description: </h4>
+        <p class="descript_contents">{{item.description}}</p><br/>
+        <h4 class="descript_header">Start price: </h4>
+        <p class="descript_contents">${{biddingitem.start_price}} </p>
+        <h4 class="descript_header">Current highest price: </h4>
+        <p class="descript_contents">${{curr_price}}</p>    
+        <h4 class="descript_header">Buy-Out price: </h4>
+        <p class="descript_contents">${{biddingitem.max_price}}</p> 
 
         <form method="post">
             
         {% csrf_token %}
         
         {{ form.as_p }}
-
-         <button id ="quant_submit" type="submit" class="pure-button pure-button-primary">Bid</button>
+        <button class="button" type="submit" style="padding: 14px 136px;">Buy</button>
         </form> 
-        Bidding history:
+          <br />
+          <h4 class="descript_header">
+            Bidding history:
+          </h4>
         <table class="pure-table">
     <thead>
         
@@ -115,7 +146,7 @@
           </ul>
                 <form type="get" action="." style="margin: 0">
         <input  id="search_box" type="text" name="search_box"  placeholder="Search...">
-        <button id="search_submit" type="submit" >Search</button>
+        <button id="search_submit" type="submit" >Submit</button>
     </form>
         </div>
           </div>

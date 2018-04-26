@@ -348,7 +348,7 @@ def itemPage(request,itemIdx):
                                     'placeholder': ['max = ',str(item.quantity)],}))
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
     hasBought = (list(app.models.Order.objects.filter(buyer_id = buyer,item_id = item)) != [])
-    comments = list(app.models.Review.objects.filter(buyer = buyer,item = item))
+    comments = list(app.models.Review.objects.filter(item = item))
     hasCommented = (comments == [])
     return render(
         request,
@@ -468,7 +468,7 @@ def shipPage(request,orderIdx,code):
         }
     )        
         
-
+# Return message for different reasons
 def research(request,code):
     """Renders the resume page."""
     massage = ''
@@ -542,6 +542,7 @@ def research(request,code):
         }
     )
 
+# pay bill
 def payBill(request,bill):
     """Renders the resume page."""
     yabeUser = app.models.YabeUser.objects.get(yabeusername = request.user.username)
@@ -563,12 +564,16 @@ def payBill(request,bill):
         }
     )
 
+
 def buyitnow(request,itemIdx):
     """Renders the resume page."""
     item = app.models.Item.objects.get(id = itemIdx)
     biddingItem = app.models.BiddingItem.objects.get(item = item)
     buyer = app.models.YabeUser.objects.get(yabeusername = request.user.username)
-
+    if list(app.models.Addr.objects.filter(holder = buyer)) == []:
+                return redirect('research',code = 6)
+    if list(app.models.PaymentMethod.objects.filter(holder = buyer)) == []:
+        return redirect('research',code = 7)
     if request.user.username == '':
         return redirect('research',code = 9)
     if buyer.balance < -100:
@@ -673,7 +678,6 @@ def addItem(request):
             'curruser':request.user.username,           
         })
 
-
 # Add A Bidding Product
 def addBiddingItem(request):
     if request.method == 'POST':
@@ -701,6 +705,7 @@ def addBiddingItem(request):
         form = app.forms.AddBiddingItemForm()
     return render(request, 'app/addBiddingItem.html', {'form': form},)
 
+# edit address, if don't have address, then create a new instance
 def addAddr(request):
     if request.method == 'POST':
         form = app.forms.AddressForm(request.POST)

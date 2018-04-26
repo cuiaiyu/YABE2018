@@ -180,7 +180,7 @@ def teleMarketReport(request):
                     'age':user.age,
                     'email':'',
                     'totalBidding':len(list(app.models.BiddingRecord.objects.filter(buyer = user,bidding_date__gt = datetime.now()-timedelta(days = 7)))),
-                    'wonBidding':len(list(app.models.BiddingRecord.objects.filter(buyer = user,status = 'Win',bidding_date__gt = datetime.now()-timedelta(days = 7)))),
+                    'wonBidding':len(list(app.models.BiddingRecord.objects.filter(buyer = user,status = 'win',bidding_date__gt = datetime.now()-timedelta(days = 7)))),
                     'addr':''
                     }
         email = "N/A"
@@ -204,6 +204,7 @@ def teleMarketReport(request):
         }
     )
 
+# Render table of bidding history
 def biddingStat(request):
     '''Rends Project Page'''
     curruser = request.user.username
@@ -217,8 +218,8 @@ def biddingStat(request):
     for i in range(0,8):
         cata = {
             'name': CATAGORY_CHOICES[i][1],
-            'availableItem':len([j for j in list(app.models.BiddingItem.objects.filter(expire_date__gt = datetime.now())) if j.item.category == CATAGORY_CHOICES[i][1]]),
-            'totalBidding': len([j for j in list(app.models.BiddingRecord.objects.filter(bidding_date__gt = datetime.now() - timedelta(days = 7))) if j.bid_item.item.category == CATAGORY_CHOICES[i][1]]),
+            'availableItem':len([j for j in list(app.models.BiddingItem.objects.filter(expire_date__gt = datetime.now())) if j.item.category == str(i)]),
+            'totalBidding': len([j for j in list(app.models.BiddingRecord.objects.filter(bidding_date__gt = datetime.now() - timedelta(days = 7))) if j.bid_item.item.category ==str(i)]),
             }
         catas.append(cata)
 
@@ -236,6 +237,7 @@ def biddingStat(request):
         }
     )
 
+# Render table of cashback history
 def cashbackHistory(request):
     '''Rends Project Page'''
     curruser = request.user.username
@@ -254,6 +256,8 @@ def cashbackHistory(request):
             'cashbacklist':cashbacklist,
         }
     )
+
+# Render table of bidding history
 def biddingHistory(request):
     '''Rends Project Page'''
     curruser = request.user.username
@@ -271,6 +275,8 @@ def biddingHistory(request):
             'mybiddings':mybiddings,
         }
     )
+
+# Render list of bidding item
 def bidding(request):
     '''Rends Project Page'''
     assert isinstance(request, HttpRequest)
@@ -305,6 +311,7 @@ def bidding(request):
         }
     )
 
+# Render Item page for a single item
 def itemPage(request,itemIdx):
     '''Rends Project Page'''
     if request.user.username == '':
@@ -365,7 +372,8 @@ def itemPage(request,itemIdx):
             'reviews':comments
         }
     )
-        
+     
+# Render item page for a bidding item
 def biddingItemPage(request,itemIdx):
     '''Rends Project Page'''
     if request.user.username == '':
@@ -423,6 +431,8 @@ def biddingItemPage(request,itemIdx):
             'biddingHistory':records,
         }
     )
+
+#Shipping process
 def shipping(request,orderIdx,code):
     code = str(code)
     user = app.models.YabeUser.objects.get(yabeusername = request.user.username)
@@ -455,6 +465,7 @@ def shipping(request,orderIdx,code):
 
     return message
 
+# render ship page
 def shipPage(request,orderIdx,code):
     """Renders the resume page."""
     return render(
@@ -738,6 +749,7 @@ def addAddr(request):
         form = app.forms.AddressForm()
     return render(request, 'app/addAddr.html', {'form': form})
 
+# 
 def addUser(request):
     username = request.user.username;
     user = app.models.YabeUser.objects.get(yabeusername = username)
@@ -803,10 +815,9 @@ def addRating(request,item_id):
             item = app.models.Item.objects.get(id = item_id)
             app.models.Review.objects.create(feedback = comments, buyer = user, item = item,rating = rating )
             return redirect('itemPage', itemIdx = item_id)
-
     else:
         form = app.forms.RatingForm()
-    return render(request, 'app/leaveRating.html', {'form': form})
+    return render(request, 'app/LeaveRating.html', {'form': form})
 
 def YABEinitialize(request):
     # Create admin user YABE if not existing
@@ -859,6 +870,9 @@ def YABEinitialize(request):
                                         quantity = 99999,
                                         isVirtual = True,
                                         price = 10)
+
+
+    # Terminating Bidding expired
     biddings = list(app.models.BiddingItem.objects.filter(isSold = False,
                                                           expire_date__lt = datetime.now()))
     for bid in biddings:

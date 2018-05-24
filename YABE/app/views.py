@@ -258,11 +258,15 @@ def cashbackHistory(request):
     )
 
 # Render table of bidding history
-def biddingHistory(request):
+def biddingHistory(request,userType):
     '''Rends Project Page'''
     curruser = request.user.username
     user = app.models.YabeUser.objects.get(yabeusername = curruser)
-    mybiddings = list(app.models.BiddingRecord.objects.filter(buyer = user))
+    if str(userType) ==  '1':
+        mybiddings = list(app.models.BiddingRecord.objects.filter(buyer = user))
+    else:
+        mybiddings = [i for i in list(app.models.BiddingRecord.objects.filter(buyer = user)) if i.bid_item.item.seller == user]
+   
     return render(
         request,
          'BiddingHistory.html',
@@ -273,6 +277,44 @@ def biddingHistory(request):
             'curr_selection':'',#curr_selection,
             'curruser':request.user.username,
             'mybiddings':mybiddings,
+        }
+    )
+
+def biddingItemReport(request):
+    '''Rends Project Page'''
+    curruser = request.user.username
+    user = app.models.YabeUser.objects.get(yabeusername = curruser)
+    mybiddings = [i for i in list(app.models.BiddingItem.objects.all()) if i.item.seller == user]
+    newbiddings = []
+    maxprices = []
+    for bid in mybiddings:
+        temp = {
+            'seller':bid.item.seller.yabeusername,
+            'item':bid.item.name,
+            'expire_date':bid.expire_date,
+            'start_price':bid.start_price,
+            'max_price':bid.max_price,
+            'curr_price':bid.start_price,
+            'isSold':bid.isSold,
+            }
+        bidHistory = list(app.models.BiddingRecord.objects.filter(bid_item = bid))
+        max = bid.start_price
+        for his in bidHistory:
+            if his.bid_price > max:
+                max = his.bid_price
+        temp['curr_price']= max
+        newbiddings.append(temp)
+
+    return render(
+        request,
+         'app/BiddingItemReport.html',
+        context = 
+        {
+            'host_info':BasicData.HOST,
+            'year':datetime.now().year,
+            'curr_selection':'',#curr_selection,
+            'curruser':request.user.username,
+            'newbiddings':newbiddings,
         }
     )
 

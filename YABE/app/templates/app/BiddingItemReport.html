@@ -1,0 +1,36 @@
+
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+    <h2>My Bidding Items - Status Report</h2>
+                 <table class="pure-table">
+    <thead>
+        
+        <tr>
+            <th>Seller</th>
+            <th>ItemName</th>
+            <th>End Date</th>
+            <th>Start Price</th>
+            <th>BuyItNow Price</th>
+            <th>Current Maximum Price</th>
+            <th>Has Sold</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for bid in newbiddings %}
+        <tr>
+            <td>{{bid.seller}}</td>
+            <td>{{bid.item}}</td>
+            <td>{{bid.expire_date}}</td>
+            <td>{{bid.start_price}}</td>
+            <td>{{bid.max_price}}</td>
+            <td>{{bid.curr_price}}</td>
+            <td>{{bid.isSold}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

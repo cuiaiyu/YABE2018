@@ -60,6 +60,7 @@
                     <li class="menu-item"><a href="{% url 'addItem' %}">Add Regular Item</a></li>
                     <li class="menu-item"><a href="{% url 'addBiddingItem' %}">Add Bidding Item</a></li>
                     <li class="menu-item"><a href="{% url 'transactionHistory' userType=2 %}">My Sold History</a></li>
+                    <li class="menu-item"><a href="{% url 'biddingItemReport'  %}">My Item for Bidding History</a></li>
                 </ul>
             </div>
             {% else %}
@@ -70,7 +71,7 @@
             <h4 class="bio-name">Buyer Section</h4>
             <div class="pure-menu pure-menu-open pure-menu-horizontal" id="contact">
                 <ul>
-                    <li class="menu-item"><a href="{% url 'biddingHistory'%}">My Bidding History</a></li>
+                    <li class="menu-item"><a href="{% url 'biddingHistory' userType=1 %}">My Bidding History</a></li>
                     <li class="menu-item"><a href="{% url 'transactionHistory' userType=1 %}">My Purchases History</a></li>
                 </ul>
             </div>

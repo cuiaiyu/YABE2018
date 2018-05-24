@@ -52,9 +52,9 @@ urlpatterns = [
     url(r'^research/(?P<code>\d+)/$$', app.views.research, name='research'),
      url(r'^shipping/(?P<orderIdx>\d+)/(?P<code>(\d+))/$$$', app.views.shipPage, name='shipping'),
     url(r'^sendMessage/$', app.views.sendMessageHandler, name='sendMessage'),
-    
+     url(r'^BiddingItemReport/$', app.views.biddingItemReport, name='biddingItemReport'),
     url(r'^Bidding/$', app.views.bidding, name='bidding'),
-    url(r'^BiddingHistory/$', app.views.biddingHistory, name='biddingHistory'),
+    url(r'^BiddingHistory/(?P<userType>\d+)/$$', app.views.biddingHistory, name='biddingHistory'),
     url(r'^TeleMarketReport/$', app.views.teleMarketReport, name='teleMarketReport'),
     url(r'^BiddingStat/$', app.views.biddingStat, name='biddingStat'),
     url(r'^Cashback/$', app.views.cashbackHistory, name='cashback'),
